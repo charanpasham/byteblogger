@@ -15,19 +15,15 @@ export default async function HomePage() {
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"
           action={async (formData: FormData) => {
             "use server";
+
+            // eslint-disable-next-line
             const title = formData.get("title")?.toString().trim();
             if (!title || title.length === 0) {
               throw new Error("Title is required");
             }
-
-            const todoData = {
-              title,
-              description:
-                formData.get("description")?.toString().trim() || null,
-            };
             await db.insert(todos).values({
-              title: todoData.title,
-              description: todoData.description,
+              title,
+              description: "",
               completed: false, // Assuming a default value for 'completed'
               createdAt: new Date(), // Assuming 'createdAt' is required
               updatedAt: null, // Assuming 'updatedAt' can be null
@@ -57,6 +53,8 @@ export default async function HomePage() {
                 <form
                   action={async (formData: FormData) => {
                     "use server";
+
+                    // eslint-disable-next-line
                     const id = formData.get("id")?.toString();
                     await db.delete(todos).where(
                       eq(todos.id, Number(id)), // Ensure the id is a number
