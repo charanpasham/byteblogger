@@ -3,6 +3,10 @@ import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 import { todos } from "~/server/db/schema";
 
+// Make the page dynamic by exporting this config
+export const dynamic = "force-dynamic";
+export const revalidate = 0; // Disable static caching
+
 export default async function HomePage() {
   const currentTodo = await db.query.todos.findMany();
   return (
