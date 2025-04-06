@@ -1,14 +1,16 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import Google from "next-auth/providers/google";
+import { db } from "@/server/db";
 
-import { db } from "~/server/db";
 import {
   accounts,
   sessions,
   users,
   verificationTokens,
-} from "~/server/db/schema";
+} from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,15 +22,11 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 /**
@@ -39,6 +37,45 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     DiscordProvider,
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      profile: async (profile) => {
+        const baseProfile = {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          emailVerified: profile.email_verified,
+          image: profile.picture,
+        };
+
+        try {
+          const exisitingUser = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, profile.email));
+
+          if (exisitingUser.length === 0) {
+            return {
+              ...baseProfile,
+              role:
+                baseProfile.email === "scharan19@gmail.com" ? "admin" : "user", // Assign admin role to specific email
+            };
+          } else {
+            return {
+              ...baseProfile,
+              role: exisitingUser[0]?.role, // Use existing user's role
+            };
+          }
+        } catch (error) {
+          console.error("Error fetching or creating user:", error);
+          return {
+            ...baseProfile,
+            role: "user", // Default to user role if there's an error
+          };
+        }
+      },
+    }),
     /**
      * ...add more providers here.
      *

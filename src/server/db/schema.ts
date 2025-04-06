@@ -46,6 +46,22 @@ export const users = createTable("user", (d) => ({
     })
     .default(sql`CURRENT_TIMESTAMP`),
   image: d.varchar({ length: 255 }),
+  role: d.varchar({ length: 255 }).notNull().default("user"),
+}));
+
+export const roles = createTable("role", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: d.varchar({ length: 255 }).notNull().unique(),
+  description: d.text().$type<string | null>().default(null),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -106,15 +122,3 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
-
-export const todos = createTable("todo", (d) => ({
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-  title: d.varchar({ length: 256 }).notNull(),
-  description: d.text().$type<string | null>().default(null),
-  completed: d.boolean().default(false).notNull(),
-  createdAt: d
-    .timestamp({ withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-}));
