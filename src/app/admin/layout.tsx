@@ -23,11 +23,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${geist.variable} text-gray-500`}
-    >
+    <html lang="en" suppressHydrationWarning className={`${geist.variable} `}>
       <body>
         <ThemeProvider
           attribute="class"
