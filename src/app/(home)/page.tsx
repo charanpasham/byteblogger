@@ -11,6 +11,7 @@ import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const blogPosts = await db
