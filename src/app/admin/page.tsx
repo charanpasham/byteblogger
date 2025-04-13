@@ -8,16 +8,6 @@ export default async function Admin() {
   if (!session) {
     redirect("api/auth/signin");
   }
-
-  if (session.user.role !== "admin") {
-    return (
-      <Alert variant={"destructive"} className="mx-auto mt-10 w-full max-w-md">
-        <h2 className="text-lg font-bold">Access Denied</h2>
-        <p>You do not have permission to access this page.</p>
-      </Alert>
-    );
-  }
-
   const userList = await db.select().from(users);
   const blogPosts = await db.select().from(posts);
 

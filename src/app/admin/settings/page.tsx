@@ -3,6 +3,9 @@ import { Label } from "@/components/ui/label";
 import { auth } from "@/server/auth";
 
 import DeleteProfile from "./deleteProfile";
+import Image from "next/image";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { ModeToggle } from "@/app/modeToggle";
 
 export default async function CreateSettingPage() {
   const session = await auth();
@@ -22,7 +25,21 @@ export default async function CreateSettingPage() {
           </div>
           <div className="mt-4 flex items-center gap-3">
             <Label htmlFor="image">Profile Image: </Label>
-            <p className="break-all text-gray-400">{session?.user.image}</p>
+            <Avatar>
+              <AvatarImage
+                src={session?.user.image || "/default-avatar.png"}
+                alt="Profile Image"
+                className="h-12 w-12 rounded-full"
+              />
+            </Avatar>
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <Label htmlFor="image">Role: </Label>
+            <p className="text-gray-400">{session?.user?.role}</p>
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <Label htmlFor="image">Dark Mode Toggle: </Label>
+            <ModeToggle />
           </div>
         </form>
         {session?.user?.email && <DeleteProfile email={session?.user?.email} />}

@@ -3,10 +3,12 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import Header from "../header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { auth } from "@/server/auth";
+import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -19,9 +21,14 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
+
   return (
     <html lang="en" suppressHydrationWarning className={`${geist.variable} `}>
       <body>
@@ -36,8 +43,18 @@ export default function RootLayout({
               <AppSidebar />
               <SidebarTrigger />
               {/* Main content area */}
-              <main className="mx-auto max-w-screen-xl px-4 py-5 lg:px-12">
-                {children}
+              <main className="mx-auto py-5 md:w-auto md:min-w-[820px] lg:px-12">
+                {session.user.role !== "admin" ? (
+                  <Alert
+                    variant={"destructive"}
+                    className="mx-auto mt-10 w-full max-w-md"
+                  >
+                    <h2 className="text-lg font-bold">Access Denied</h2>
+                    <p>You do not have permission to access this page.</p>
+                  </Alert>
+                ) : (
+                  children
+                )}
               </main>
             </SidebarProvider>
           </SessionProvider>

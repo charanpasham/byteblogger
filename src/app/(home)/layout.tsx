@@ -31,9 +31,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             <Header />
-            <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
-              {children}
-            </div>
+            <div className="mx-auto p-3 md:w-[608px]">{children}</div>
           </SessionProvider>
         </ThemeProvider>
       </body>

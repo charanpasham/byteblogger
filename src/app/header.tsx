@@ -70,7 +70,6 @@ export default function Header() {
     if (status === "loading" || !session || !session.user) {
       return null;
     }
-    console.log(session.user.image);
     return (
       <div className="flex items-center gap-2">
         <DropdownMenu>
@@ -119,8 +118,6 @@ export default function Header() {
             )}
 
             <ModeToggle />
-            {/* <UserAvatar />
-            <LogOut /> */}
             <LogOutMenu />
             <LogIn />
           </>

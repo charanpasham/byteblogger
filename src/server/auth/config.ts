@@ -3,7 +3,6 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 import { db } from "@/server/db";
-
 import {
   accounts,
   sessions,
@@ -11,6 +10,7 @@ import {
   verificationTokens,
 } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { UTApi } from "uploadthing/server";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -34,6 +34,16 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+export async function UploadProfilePicture(imageUrl: string, id: string) {
+  const utapi = new UTApi();
+  const response = await fetch(imageUrl);
+  const blob = await response.blob();
+  const file = new File([blob], `${id}.jpg`, { type: "image/jpeg" });
+  const uploaded = await utapi.uploadFiles(file);
+  return uploaded.data;
+}
+
 export const authConfig = {
   providers: [
     DiscordProvider,
@@ -56,10 +66,15 @@ export const authConfig = {
             .where(eq(users.email, profile.email));
 
           if (exisitingUser.length === 0) {
+            const newProfileImageUrl = await UploadProfilePicture(
+              profile.picture,
+              profile.sub,
+            );
             return {
               ...baseProfile,
               role:
                 baseProfile.email === "scharan19@gmail.com" ? "admin" : "user", // Assign admin role to specific email
+              image: newProfileImageUrl?.ufsUrl,
             };
           } else {
             return {

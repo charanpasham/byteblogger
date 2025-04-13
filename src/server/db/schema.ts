@@ -10,27 +10,6 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `byteblogger_${name}`);
 
-export const posts = createTable(
-  "post",
-  (d) => ({
-    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    name: d.varchar({ length: 256 }),
-    createdById: d
-      .varchar({ length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: d
-      .timestamp({ withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-  }),
-  (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
-  ],
-);
-
 export const users = createTable("user", (d) => ({
   id: d
     .varchar({ length: 255 })
@@ -56,7 +35,6 @@ export const roles = createTable("role", (d) => ({
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: d.varchar({ length: 255 }).notNull().unique(),
-  description: d.text().$type<string | null>().default(null),
   createdAt: d
     .timestamp({ withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -121,4 +99,125 @@ export const verificationTokens = createTable(
     expires: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
+);
+
+export const posts = createTable(
+  "post",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    title: d.varchar({ length: 256 }).notNull(),
+    description: d
+      .varchar({ length: 512 })
+      .$type<string | null>()
+      .default(null),
+    content: d.text().$type<string | null>().default(null),
+    slug: d.varchar({ length: 256 }).notNull().unique(),
+    isPublished: d.boolean().notNull().default(false),
+    userId: d
+      .varchar({ length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "set default" })
+      .default("0"),
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+    publishedAt: d
+      .timestamp({ withTimezone: true })
+      .$type<Date | null>()
+      .default(null),
+  }),
+  (t) => [index("created_by_idx").on(t.userId), index("slug_idx").on(t.slug)],
+);
+
+export const postLikes = createTable(
+  "post_likes",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    postId: d
+      .integer()
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    userId: d
+      .varchar({ length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "set default" })
+      .default("0"),
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  }),
+  (t) => [
+    index("post_likes_post_id_idx").on(t.postId),
+    index("post_likes_user_id_idx").on(t.userId),
+  ],
+);
+
+export const postLikesRelations = relations(postLikes, ({ one }) => ({
+  post: one(posts, { fields: [postLikes.postId], references: [posts.id] }),
+  user: one(users, { fields: [postLikes.userId], references: [users.id] }),
+}));
+
+export const comments = createTable("comments", (d) => ({
+  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  content: d.text().notNull(),
+  postId: d
+    .integer()
+    .notNull()
+    .references(() => posts.id, { onDelete: "cascade" }),
+  userId: d
+    .varchar({ length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "set default" })
+    .default("0"),
+  parentCommentId: d
+    .integer()
+    .$type<number | null>()
+    .references((): number => comments.id)
+    .default(null),
+  createdAt: d
+    .timestamp({ withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: d
+    .timestamp({ withTimezone: true })
+    .$onUpdate(() => new Date())
+    .default(sql`CURRENT_TIMESTAMP`),
+  IsDeleted: d.boolean().notNull().default(false),
+  IsEdited: d.boolean().notNull().default(false),
+}));
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
+  user: one(users, { fields: [comments.userId], references: [users.id] }),
+  parentComment: one(comments, {
+    fields: [comments.parentCommentId],
+    references: [comments.id],
+  }),
+}));
+
+export const commentLikes = createTable(
+  "comment_likes",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    commentId: d
+      .integer()
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    userId: d
+      .varchar({ length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "set default" })
+      .default("0"),
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  }),
+  (t) => [
+    index("comment_likes_comment_id_idx").on(t.commentId),
+    index("comment_likes_user_id_idx").on(t.userId),
+  ],
 );

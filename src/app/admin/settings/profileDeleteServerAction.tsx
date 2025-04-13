@@ -3,6 +3,7 @@ import { db } from "@/server/db";
 import { users, accounts, sessions } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { UTApi } from "uploadthing/server";
 export const ProfileDeleteServerAction = async (email: string) => {
   "use server";
   // For example, you might want to call an API to delete the user
@@ -15,11 +16,13 @@ export const ProfileDeleteServerAction = async (email: string) => {
   if (!userId) {
     throw new Error("User not found");
   }
-
-  // Delete the current users session.
-  await db.delete(sessions).where(eq(sessions.userId, userId));
-  // Delete the user account
-  await db.delete(accounts).where(eq(accounts.userId, userId));
-  await db.delete(users).where(eq(users.id, userId));
+  const utapi = new UTApi();
+  const imageName = `${userId}.jpg`;
+  await Promise.all([
+    utapi.deleteFiles([imageName]),
+    db.delete(sessions).where(eq(sessions.userId, userId)),
+    db.delete(accounts).where(eq(accounts.userId, userId)),
+    db.delete(users).where(eq(users.id, userId)),
+  ]);
   redirect("/");
 };

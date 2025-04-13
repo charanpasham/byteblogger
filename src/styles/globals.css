@@ -148,3 +148,48 @@
     @apply bg-background text-foreground;
   }
 }
+
+.tiptap blockquote {
+  @apply mx-0 my-[1.5rem] border-l-4 border-l-gray-600 pl-4;
+}
+
+.tiptap ul {
+  @apply !list-disc !pl-5;
+}
+
+.tiptap pre {
+  @apply !my-4;
+  .hljs {
+    @apply !rounded-lg;
+  }
+}
+
+/* Basic editor styles */
+.tiptap {
+  @apply [&>:first-child]:mt-0;
+
+  img {
+    @apply rounded-xl;
+  }
+  /* List styles */
+  ul,
+  ol {
+    @apply my-5 mr-1.5 ml-[0.4rem] px-4; /* ml-[0.4rem] for ~6.4px = 0.4rem */
+
+    li p {
+      @apply mt-[0.25em] mb-[0.25em];
+    }
+  }
+  h1 {
+    @apply my-4 text-2xl font-bold;
+  }
+  h2 {
+    @apply my-3 text-xl font-bold;
+  }
+  h3 {
+    @apply my-2 text-lg font-bold;
+  }
+  a {
+    @apply !cursor-pointer !font-semibold !text-blue-500;
+  }
+}
