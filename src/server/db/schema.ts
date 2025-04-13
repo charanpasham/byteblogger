@@ -172,11 +172,11 @@ export const comments = createTable("comments", (d) => ({
     .notNull()
     .references(() => users.id, { onDelete: "set default" })
     .default("0"),
-  parentCommentId: d
-    .integer()
-    .$type<number | null>()
-    .references((): number => comments.id)
-    .default(null),
+  // parentCommentId: d
+  //   .integer()
+  //   .$type<number | null>()
+  //   .references((): number => comments.id)
+  //   .default(null),
   createdAt: d
     .timestamp({ withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -192,10 +192,10 @@ export const comments = createTable("comments", (d) => ({
 export const commentsRelations = relations(comments, ({ one }) => ({
   post: one(posts, { fields: [comments.postId], references: [posts.id] }),
   user: one(users, { fields: [comments.userId], references: [users.id] }),
-  parentComment: one(comments, {
-    fields: [comments.parentCommentId],
-    references: [comments.id],
-  }),
+  // parentComment: one(comments, {
+  //   fields: [comments.parentCommentId],
+  //   references: [comments.id],
+  // }),
 }));
 
 export const commentLikes = createTable(
