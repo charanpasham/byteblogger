@@ -180,8 +180,12 @@
       @apply mt-[0.25em] mb-[0.25em];
     }
   }
+
+  p {
+    @apply my-4 text-base leading-6;
+  }
   h1 {
-    @apply my-4 text-2xl font-bold;
+    @apply my-4 text-2xl font-semibold;
   }
   h2 {
     @apply my-3 text-xl font-bold;
