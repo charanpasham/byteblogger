@@ -1,7 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,

@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DeletePost } from "./deletePost";
 
 export default async function EditPage() {
   const session = await auth();
@@ -33,20 +34,23 @@ export default async function EditPage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <h1 className="mb-4 text-2xl font-bold">Edit Your Blogs</h1>
-      <div className="space-y-4">
+      <div className="flex gap-3 flex-col">
         {blogs.map((blog) => (
-          <Link
-            href={`/admin/edit-blog/${blog.slug}`}
-            className="text-blue-600 hover:underline"
-            key={blog.id}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle> {blog.title}</CardTitle>
-                <CardDescription>{blog.description}</CardDescription>
+            <Card key={blog.id}>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <Link
+                    href={`/admin/edit-blog/${blog.slug}`}
+                    className="text-slate-300 hover:underline"
+                    key={blog.id}
+                  >
+                  <CardTitle> {blog.title}</CardTitle>
+                  <CardDescription>{blog.description}</CardDescription>
+                </Link>
+                
+                <DeletePost  postId={blog.id} />
+                
               </CardHeader>
             </Card>
-          </Link>
         ))}
       </div>
     </div>
