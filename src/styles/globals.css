@@ -25,12 +25,15 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+  body {
+    @apply font-sans !text-lg dark:text-gray-300
+  }
 }
 
 @theme {
-  --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans: source-serif-pro, ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 }
 
 :root {
@@ -69,7 +72,7 @@
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
+  --background: oklch(36.843% 0.01231 273.075);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
@@ -182,18 +185,19 @@
   }
 
   p {
-    @apply my-4 text-base leading-6;
+    @apply my-4 leading-7;
   }
+
   h1 {
-    @apply my-4 text-2xl font-semibold;
+    @apply my-4 text-3xl font-bold;
   }
   h2 {
-    @apply my-3 text-xl font-bold;
+    @apply my-3 font-medium
   }
   h3 {
-    @apply my-2 text-lg font-bold;
+    @apply my-2 font-medium;
   }
   a {
-    @apply !cursor-pointer !font-semibold !text-blue-500;
+    @apply !cursor-pointer !font-semibold text-blue-500
   }
 }

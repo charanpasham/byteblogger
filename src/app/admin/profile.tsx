@@ -37,6 +37,7 @@ export default function Profile() {
 
               <Button
                 variant="destructive"
+                className="text-gray-200 cursor-pointer"
                 size={"sm"}
                 onClick={() => signOut()}
               >

@@ -22,6 +22,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${geist.variable}`}>
+      <head>
+        <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
+      </head>
       <body>
         <ThemeProvider
           attribute="class"
@@ -31,7 +34,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             <Header />
-            <div className="mx-auto p-3 md:w-[608px]">{children}</div>
+            <div className="mx-auto p-3 md:w-[624px]">{children}</div>
           </SessionProvider>
         </ThemeProvider>
       </body>

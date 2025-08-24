@@ -19,7 +19,7 @@ export default function DeleteProfile({ email }: { email: string }) {
     <div className="mt-6">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant={"destructive"}>
+          <Button variant={"destructive"} className="text-gray-200 cursor-pointer">
             <Trash />
             Delete Profile
           </Button>

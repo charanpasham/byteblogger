@@ -40,7 +40,7 @@ export default async function EditPage() {
               <CardHeader className="flex flex-row items-center justify-between">
                 <Link
                     href={`/admin/edit-blog/${blog.slug}`}
-                    className="text-slate-300 hover:underline"
+                    className="text-slate-500 hover:underline"
                     key={blog.id}
                   >
                   <CardTitle> {blog.title}</CardTitle>

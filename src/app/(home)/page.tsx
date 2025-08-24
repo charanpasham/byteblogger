@@ -22,23 +22,22 @@ export default async function HomePage() {
     .limit(5);
   return (
     <main>
-      <div className="container flex flex-col items-center justify-center gap-3 px-4 py-16">
+      <div className="container flex flex-col items-center justify-center gap-1 px-4 py-16">
         {blogPosts.length > 0 ? (
           <>
             {blogPosts.map((post) => (
               <Link
                 href={`/posts/${post.post.slug}`}
                 key={post.post.id}
-                className="w-full max-w-3xl space-y-8 p-5"
+                className="w-full max-w-3xl space-y-3 p-5"
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{post.post.title}</CardTitle>
+                    <CardTitle className="text-xl font-semibold">{post.post.title}</CardTitle>
                     <CardDescription>{post.post.description}</CardDescription>
                   </CardHeader>
-
                   <CardFooter>
-                    <div className="text-gray-600">
+                    <div className="text-gray-500 text-xs">
                       <p>{post.user?.name}</p>
                       {new Date(post.post.createdAt).toLocaleDateString()}
                     </div>

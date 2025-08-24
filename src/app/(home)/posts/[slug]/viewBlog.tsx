@@ -13,7 +13,7 @@ export default function ViewBlogPage({ content }: { content: string }) {
 
   return (
     <>
-      <div
+      <article
         className="tiptap proseMirror my-10 min-h-full"
         dangerouslySetInnerHTML={{ __html: content || "" }}
       />
