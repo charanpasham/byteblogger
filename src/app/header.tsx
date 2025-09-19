@@ -72,7 +72,7 @@ export default function Header() {
     }
     return (
       <div className="flex items-center gap-2">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger className="flex items-center gap-2">
             {session?.user?.image && (
               <Avatar>
@@ -102,7 +102,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-gray-600 dark:bg-gray-900 px-4 text-gray-300 shadow-sm">
+    <header className="flex h-16 items-center justify-between border-b">
       <h1 className="text-xl font-bold">
         <Link href="/">Byte Blogger</Link>
       </h1>

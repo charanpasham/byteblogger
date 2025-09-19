@@ -213,7 +213,7 @@ export const RichTextEditor = ({
   };
 
   return (
-    <div className="rounded bg-gray-900 p-4 md:w-[608px]">
+    <div className="rounded bg-gray-900 p-4">
       <EditorProvider
         extensions={extensions}
         content={content}

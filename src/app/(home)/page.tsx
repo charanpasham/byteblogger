@@ -10,6 +10,8 @@ import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import Image from "next/image";
+import { GithubIcon } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
@@ -21,15 +23,23 @@ export default async function HomePage() {
     .orderBy(posts.createdAt)
     .limit(5);
   return (
-    <main>
-      <div className="container flex flex-col items-center justify-center gap-1 px-4 py-16">
+      <div className="container flex flex-col gap-1 py-16">
+        <p>
+          Hi, I'm Charan! I'm a software engineer who loves turning ideas into reality through code. I love exploring new tech and sharing my journey here on Byte Blogger.
+        </p>
+        <Link href="https://github.com/charanpasham" target="_blank" className="mt-2">
+          <Image src="/Github_Invertocat_Dark.svg" alt="GitHub Logo" width={32} height={32} className="dark:hidden" />
+          <Image src="/Github_Invertocat_Light.svg" alt="GitHub Logo" width={32} height={32} className="hidden dark:block" />
+        </Link>
+
+        <h2 className="mt-10 mb-5 text-2xl font-bold">Recent Posts</h2>
         {blogPosts.length > 0 ? (
           <>
             {blogPosts.map((post) => (
               <Link
                 href={`/posts/${post.post.slug}`}
                 key={post.post.id}
-                className="w-full max-w-3xl space-y-3 p-5"
+                className="w-full max-w-3xl space-y-3 py-2"
               >
                 <Card>
                   <CardHeader>
@@ -50,6 +60,5 @@ export default async function HomePage() {
           <Alert>No blog posts available.</Alert>
         )}
       </div>
-    </main>
   );
 }
