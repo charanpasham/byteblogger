@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 export const dynamic = "force-dynamic";
 
@@ -18,8 +18,7 @@ export default async function HomePage() {
     .from(posts)
     .where(eq(posts.isPublished, true))
     .leftJoin(users, eq(posts.userId, users.id))
-    .orderBy(posts.createdAt)
-    .limit(5);
+    .orderBy(desc(posts.createdAt))
   return (
       <div className="container flex flex-col gap-1 py-16">
         <p>

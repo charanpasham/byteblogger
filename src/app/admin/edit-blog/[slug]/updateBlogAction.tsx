@@ -41,3 +41,11 @@ export async function UpdateBlogAction(
     isUpdated: true,
   } as BlogUpdateResponse;
 }
+
+export async function UpdateTitle(title: string, slug: string): Promise<void> {
+  await db.update(posts).set({ title }).where(eq(posts.slug, slug));
+}
+
+export async function UpdateDescription(description: string, slug: string): Promise<void> {
+  await db.update(posts).set({ description }).where(eq(posts.slug, slug));  
+}

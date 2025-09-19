@@ -69,7 +69,7 @@ export const EditorMenu = () => {
     }
   };
   return (
-    <div className="mb-4 flex flex-wrap gap-2">
+    <div className="mb-4 grid grid-cols-7 gap-2">
       <Button
         type="button"
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}

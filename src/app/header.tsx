@@ -6,7 +6,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LogOut as LogOutIcon } from "lucide-react";
+import { LogInIcon, LogOut as LogOutIcon, Settings } from "lucide-react";
 import { DropdownMenu } from "@/components/ui/dropdown";
 import {
   DropdownMenuContent,
@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown";
-import { Settings } from "lucide-react";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -45,9 +44,9 @@ export default function Header() {
         variant="default"
         onClick={() => signIn("google")}
         size={"sm"}
-        className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        className="rounded bg-blue-800 dark:bg-blue-900 px-4 py-2 font-bold text-white hover:bg-blue-500 dark:hover:bg-blue-700 cursor-pointer"
       >
-        Login
+        Login <LogInIcon />
       </Button>
     );
   };
@@ -75,11 +74,11 @@ export default function Header() {
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger className="flex items-center gap-2">
             {session?.user?.image && (
-              <Avatar>
+              <Avatar className="h-6 w-6">
                 <AvatarImage src={`${session?.user?.image}`} />
               </Avatar>
             )}
-            <span>{session.user.name}</span>
+            <span className="text-sm">{session.user.name}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
@@ -103,7 +102,7 @@ export default function Header() {
 
   return (
     <header className="flex h-16 items-center justify-between border-b">
-      <h1 className="text-xl font-bold">
+      <h1 className="text-2xl font-bold">
         <Link href="/">Byte Blogger</Link>
       </h1>
       <nav className="flex items-center gap-2">

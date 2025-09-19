@@ -1,7 +1,7 @@
 "use client";
 
 import "highlight.js/styles/atom-one-dark.css";
-import { Editor, EditorProvider, useCurrentEditor } from "@tiptap/react";
+import {EditorProvider, useCurrentEditor } from "@tiptap/react";
 import Blockquote from "@tiptap/extension-blockquote";
 import Text from "@tiptap/extension-text";
 import BulletList from "@tiptap/extension-bullet-list";
@@ -177,7 +177,7 @@ export const RichTextEditor = ({
   const editorProps = {
     attributes: {
       class:
-        "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mb-2 focus:outline-none p-4 bg-gray-400 rounded-lg min-h-[400px] dark:bg-gray-800",
+        "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mb-2 focus:outline-none p-4 bg-gray-400 rounded-lg min-h-[80vh] max-w-xl mx-auto dark:bg-gray-800",
     },
   };
 
