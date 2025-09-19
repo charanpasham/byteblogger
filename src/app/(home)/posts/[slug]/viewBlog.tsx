@@ -2,24 +2,14 @@
 import { useEffect } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
+import "highlight.js/styles/github-dark.css";
 
-// For GitHub dark theme (better for your dark editor background)
-// import "highlight.js/styles/github-dark.css";
-
-//import "highlight.js/styles/atom-one-dark.css";
-// import "highlight.js/styles/atom-one-light.css";
 import { useTheme } from "next-themes";
 
 export default function ViewBlogPage({ content, author }: { content: string, author: string }) {
     const { theme } = useTheme();
   useEffect(() => {
     const highlightAndAddCopyButtons = async () => {
-      if (theme === "dark") {
-        await import("highlight.js/styles/github-dark.css");
-      } else {
-        await import("highlight.js/styles/atom-one-light.css");
-      }
-
       hljs.highlightAll();
       // Add copy buttons to all <pre> blocks
       const preBlocks = document.querySelectorAll("article pre");
@@ -46,13 +36,13 @@ export default function ViewBlogPage({ content, author }: { content: string, aut
     };
 
     highlightAndAddCopyButtons();
-  }, [content, theme]);
+  }, [content]);
 
   return (
     <>
       <h2 className="pt-4 text-base italic font-thin">- {author}</h2>
       <article
-        className="tiptap proseMirror mt-5 mb-10 min-h-full"
+        className={`tiptap proseMirror mt-5 mb-10 min-h-full`}
         dangerouslySetInnerHTML={{ __html: content || "" }}
       />
     </>
