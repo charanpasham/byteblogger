@@ -10,8 +10,6 @@ import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
-import Image from "next/image";
-import { GithubIcon } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
@@ -28,8 +26,8 @@ export default async function HomePage() {
           Hi, I'm Charan! I'm a software engineer who loves turning ideas into reality through code. I love exploring new tech and sharing my journey here on Byte Blogger.
         </p>
         <Link href="https://github.com/charanpasham" target="_blank" className="mt-2">
-          <Image src="/Github_Invertocat_Dark.svg" alt="GitHub Logo" width={32} height={32} className="dark:hidden" />
-          <Image src="/Github_Invertocat_Light.svg" alt="GitHub Logo" width={32} height={32} className="hidden dark:block" />
+          <img src="https://o5vr90ifqp.ufs.sh/f/FbmnsVAMglOujcW2xTaZpedGxmtyVDbkN2o16rnWuF38LMXj" alt="GitHub Logo" className="dark:hidden w-6 h-6" />
+          <img src="https://o5vr90ifqp.ufs.sh/f/FbmnsVAMglOu9aF1Dsv2F3nI1hoptZJCeXGs9arqwjWRmLVl" alt="GitHub Logo" className="hidden dark:block w-6 h-6" />
         </Link>
 
         <h2 className="mt-10 mb-5 text-2xl font-bold">Recent Posts</h2>
