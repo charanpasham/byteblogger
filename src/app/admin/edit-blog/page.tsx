@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DeletePost } from "./deletePost";
+import { PinIcon, PinOff } from "lucide-react";
+import { TogglePinPostAction } from "./togglePinPostAction";
 
 export default async function EditPage() {
   const session = await auth();
@@ -46,9 +48,20 @@ export default async function EditPage() {
                   <CardTitle> {blog.title}</CardTitle>
                   <CardDescription>{blog.description}</CardDescription>
                 </Link>
-                
-                <DeletePost  postId={blog.id} />
-                
+                <div className="flex items-center gap-4">
+               <form action={TogglePinPostAction}>
+                  <input type="hidden" name="postId" value={blog.id} />
+                  <button type="submit" aria-label="Toggle Pin">
+                    {blog.isPinned ? (
+                      <PinOff className="h-6 w-6 text-blue-500" />
+                    ) : (
+                      <PinIcon className="h-6 w-6 text-gray-400" />
+                    )}
+                  </button>
+                </form>
+                  <DeletePost  postId={blog.id} />
+                </div>
+
               </CardHeader>
             </Card>
         ))}

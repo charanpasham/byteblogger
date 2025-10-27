@@ -127,6 +127,8 @@ export const posts = createTable(
       .timestamp({ withTimezone: true })
       .$type<Date | null>()
       .default(null),
+    isPinned: d.boolean().notNull().default(false),
+    pinnedOrder: d.integer().$type<number | null>().default(null),
   }),
   (t) => [index("created_by_idx").on(t.userId), index("slug_idx").on(t.slug)],
 );

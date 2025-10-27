@@ -8,17 +8,19 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, asc } from "drizzle-orm";
+import { PinIcon } from "lucide-react";
 import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+
   const blogPosts = await db
     .select()
     .from(posts)
     .where(eq(posts.isPublished, true))
     .leftJoin(users, eq(posts.userId, users.id))
-    .orderBy(desc(posts.createdAt))
+    .orderBy(asc(posts.pinnedOrder), desc(posts.createdAt));
   return (
       <div className="container flex flex-col gap-1 py-16">
         <p>
@@ -40,7 +42,10 @@ export default async function HomePage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl font-semibold">{post.post.title}</CardTitle>
+                    <CardTitle className="text-xl font-semibold flex justify-between">
+                      {post.post.title}
+                      <PinIcon className={post.post.isPinned ? "h-4 w-4 text-blue-500" : "hidden"} />
+                    </CardTitle>
                     <CardDescription>{post.post.description}</CardDescription>
                   </CardHeader>
                   <CardFooter>

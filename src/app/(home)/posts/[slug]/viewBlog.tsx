@@ -7,7 +7,6 @@ import "highlight.js/styles/github-dark.css";
 import { useTheme } from "next-themes";
 
 export default function ViewBlogPage({ content, author }: { content: string, author: string }) {
-    const { theme } = useTheme();
   useEffect(() => {
     const highlightAndAddCopyButtons = async () => {
       hljs.highlightAll();
