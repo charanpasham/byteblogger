@@ -14,13 +14,15 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
  const isDarkMode = theme === "dark";
  const currentUserLikedThePost = user.data?.user?.id == undefined ? false : likedByUsers.includes(user.data?.user?.id);
   useEffect(() => {
-    const highlightAndAddCopyButtons = async () => {
+    const article = document.querySelector("article");
+    if (!article) return;
+
+    // highlight function
+    const applyHighlight = () => {
       hljs.highlightAll();
-      // Add copy buttons to all <pre> blocks
-      const preBlocks = document.querySelectorAll("article pre");
+      const preBlocks = article.querySelectorAll("pre");
 
       preBlocks.forEach((pre) => {
-        // Skip if already has a button
         if (pre.querySelector(".copy-button")) return;
 
         const button = document.createElement("button");
@@ -34,14 +36,26 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
           setTimeout(() => (button.textContent = "Copy"), 2000);
         });
 
-        // Make parent relative for absolute button
         (pre as HTMLElement).style.position = "relative";
         pre.appendChild(button);
       });
     };
 
-    highlightAndAddCopyButtons();
-  }, [content]);
+    // watch for DOM updates inside <article>
+    const observer = new MutationObserver(() => {
+      applyHighlight();
+    });
+
+    observer.observe(article, {
+      childList: true,
+      subtree: true,
+    });
+
+    // apply immediately if already loaded
+    applyHighlight();
+
+    return () => observer.disconnect();
+  }, [content, theme]);
   const fill = isDarkMode ? "#99a1af" : "#364153";
   return (
     <>

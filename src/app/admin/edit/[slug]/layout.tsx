@@ -3,8 +3,8 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import Header from "../header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { requireAuth } from "@/lib/authGuard";
 
 export const metadata: Metadata = {
   title: "Byte Blog",
@@ -28,16 +28,18 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Ensure the user is authenticated
+  await requireAuth();
   return (
     <html lang="en" suppressHydrationWarning className={`${geist.variable}`}>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
       </head>
-      <body className="dark:bg-[#1a1a1a] antialiased max-w-3xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-4 md:px-6 lg:px-8">
+      <body className="dark:bg-[#1a1a1a] antialiased mx-4 mt-8">
+        <main>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -45,14 +47,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SessionProvider>
-              <Header />
               {children}
             </SessionProvider>
           </ThemeProvider>
         </main>
-        <footer className="text-sm text-gray-500 mt-8 mb-4 text-center">
-          © {new Date().getFullYear()} Byte Blog — All rights reserved.
-        </footer>
+
       </body>
     </html>
   );

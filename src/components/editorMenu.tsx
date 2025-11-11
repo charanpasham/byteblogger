@@ -12,7 +12,7 @@ import {
   Quote,
   Redo2,
   Undo2,
-  Video,
+  Video
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCurrentEditor } from "@tiptap/react";
@@ -69,7 +69,7 @@ export const EditorMenu = () => {
     }
   };
   return (
-    <div className="mb-4 grid grid-cols-7 gap-2">
+    <div className="mb-3 grid grid-cols-17 mx-auto gap-2 w-fit shadow-2xl">
       <Button
         type="button"
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}

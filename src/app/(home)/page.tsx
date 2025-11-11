@@ -40,7 +40,7 @@ export default async function HomePage() {
                 key={post.post.id}
                 className="w-full max-w-3xl space-y-3 py-2"
               >
-                <Card>
+                <Card className="dark:bg-[#181818]">
                   <CardHeader>
                     <CardTitle className="text-xl font-semibold flex justify-between">
                       {post.post.title}

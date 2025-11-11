@@ -1,7 +1,6 @@
 "use client";
-
 import "highlight.js/styles/atom-one-dark.css";
-import {EditorProvider, useCurrentEditor } from "@tiptap/react";
+import {EditorProvider } from "@tiptap/react";
 import Blockquote from "@tiptap/extension-blockquote";
 import Text from "@tiptap/extension-text";
 import BulletList from "@tiptap/extension-bullet-list";
@@ -22,29 +21,19 @@ import Link from "@tiptap/extension-link";
 import History from "@tiptap/extension-history";
 import Emoji, { gitHubEmojis } from "@tiptap-pro/extension-emoji";
 import FileHandler from "@tiptap-pro/extension-file-handler";
-
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 import { EditorMenu } from "./editorMenu";
-import { Button } from "./ui/button";
 import { EditorUploadAction } from "./editorUploadAction";
 
 interface RichTextEditorProps {
   content: string;
   onSubmit: (html: string) => void;
-  onSubmitButtonText: string;
-  onPublish?: (slug: string) => void;
-  onPublishButtonText?: string;
-  slug?: string | null;
 }
 
 export const RichTextEditor = ({
   content,
   onSubmit,
-  onSubmitButtonText,
-  onPublishButtonText,
-  slug,
-  onPublish,
 }: RichTextEditorProps) => {
   // create a lowlight instance with all languages loaded
   const lowlight = createLowlight(all);
@@ -177,51 +166,26 @@ export const RichTextEditor = ({
   const editorProps = {
     attributes: {
       class:
-        "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mb-2 focus:outline-none p-4 bg-gray-400 rounded-lg min-h-[80vh] max-w-xl mx-auto dark:bg-gray-800",
+        "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mb-2 max-w-xl mx-auto focus:outline-none p-4 rounded-lg min-h-[80vh]",
     },
   };
 
-  const SubmitButton = () => {
-    const { editor } = useCurrentEditor();
-    if (!editor) {
-      return null;
-    }
-    return (
-      <div className="mt-4 flex justify-between">
-        {onSubmit && (
-          <Button
-            type="button"
-            onClick={() => {
-              const content = editor.getHTML();
-              onSubmit(content);
-            }}
-          >
-            {onSubmitButtonText || "Save"}
-          </Button>
-        )}
-        {onPublish && (
-          <Button
-            type="button"
-            variant={"secondary"}
-            onClick={() => onPublish(slug ?? "")}
-          >
-            {onPublishButtonText}
-          </Button>
-        )}
-      </div>
-    );
-  };
-
   return (
-    <div className="rounded bg-gray-900 p-4">
+    <article className="rounded p-4 mx-4 mt-8 lg:mx-auto">
       <EditorProvider
         extensions={extensions}
         content={content}
-        slotBefore={<EditorMenu />}
         editorProps={editorProps}
+        slotBefore={<EditorMenu />}
+        onUpdate={({ editor }) => {
+          // You can handle content updates here if needed
+          const html = editor.getHTML();
+          // console.log("Editor content updated:", html);
+          onSubmit(html);
+        }}
       >
-        <SubmitButton />
+
       </EditorProvider>
-    </div>
+    </article>
   );
 };

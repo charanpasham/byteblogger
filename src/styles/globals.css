@@ -26,7 +26,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   body {
-    @apply font-sans !text-lg dark:text-gray-300
+    @apply font-sans !text-[21px] dark:text-gray-300
   }
 }
 
@@ -192,12 +192,15 @@
     @apply my-4 text-3xl font-bold;
   }
   h2 {
-    @apply my-3 font-medium
+    @apply my-3 font-bold text-2xl
   }
   h3 {
-    @apply my-2 font-medium;
+    @apply my-2 font-bold text-xl;
   }
   a {
-    @apply !cursor-pointer !font-semibold text-blue-500
+    @apply !cursor-pointer !font-semibold underline
+  }
+  pre {
+    @apply text-xs;
   }
 }

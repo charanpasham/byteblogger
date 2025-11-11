@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DeletePost } from "./deletePost";
-import { PinIcon, PinOff } from "lucide-react";
+import { EyeIcon, EyeOff, PinIcon, PinOff, Rocket, Save, ShowerHead, Upload } from "lucide-react";
 import { TogglePinPostAction } from "./togglePinPostAction";
+import { TogglePublishPostAction } from "./togglePublishPostAction";
 
 export default async function EditPage() {
   const session = await auth();
@@ -25,7 +26,8 @@ export default async function EditPage() {
   const blogs = await db
     .select()
     .from(posts)
-    .where((table) => eq(table.userId, session.user.id));
+    .where((table) => eq(table.userId, session.user.id))
+    .orderBy(posts.createdAt);
   if (blogs.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16">
@@ -41,7 +43,7 @@ export default async function EditPage() {
             <Card key={blog.id}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <Link
-                    href={`/admin/edit-blog/${blog.slug}`}
+                    href={`/admin/edit/${blog.slug}`}
                     className="text-slate-500 hover:underline"
                     key={blog.id}
                   >
@@ -49,6 +51,17 @@ export default async function EditPage() {
                   <CardDescription>{blog.description}</CardDescription>
                 </Link>
                 <div className="flex items-center gap-4">
+                  <form action={TogglePublishPostAction}>
+                    <button type="submit" className="cursor-pointer">
+                      {blog.isPublished ? (
+                          <EyeIcon className="h-6 w-6 text-green-500" />
+                      ) : (
+                          <EyeOff className="h-6 w-6 text-gray-400" />
+                      )}
+
+                    </button>
+                    <input type="hidden" name="postId" value={blog.id} />
+                  </form>
                <form action={TogglePinPostAction}>
                   <input type="hidden" name="postId" value={blog.id} />
                   <button type="submit" aria-label="Toggle Pin">
