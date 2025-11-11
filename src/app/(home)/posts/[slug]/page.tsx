@@ -1,5 +1,5 @@
 import { db } from "@/server/db";
-import { posts, users } from "@/server/db/schema";
+import { postLikes, posts, users } from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
 import ViewBlogPage from "./viewBlog";
 
@@ -25,13 +25,18 @@ export default async function PostsPage({ params }: PostProps) {
     .leftJoin(users, eq(posts.userId, users.id))
     .limit(1);
 
+  const postLikesData = await db
+    .select()
+    .from(postLikes)
+    .where(eq(postLikes.postId, post[0]?.post.id || 0));
+
   if (post.length === 0) {
     return <div className="container mx-auto px-4 py-16">Post not found</div>;
   }
   
   return (
     <>
-      <ViewBlogPage content={post[0]?.post.content ?? ""} author={post[0]?.user?.name ?? ""} />
+      <ViewBlogPage content={post[0]?.post.content ?? ""} author={post[0]?.user?.name ?? ""} likedByUsers={postLikesData.map(x => x.userId)} postId={post[0]?.post.id ?? 0} slugName={post[0]?.post.slug ?? ""} />
     </>
   );
 }

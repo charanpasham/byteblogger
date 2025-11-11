@@ -1,8 +1,10 @@
 "use server";
+import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 
 import { posts } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export interface BlogResponse {
   id: string | null;
