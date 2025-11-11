@@ -6,9 +6,12 @@ import "highlight.js/styles/github-dark.css";
 import { ThumbsUp } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { ToggleLikeAction } from "../toggleLikeAction";
+import { useTheme } from "next-themes";
 
 export default function ViewBlogPage({ content, author, likedByUsers, postId, slugName }: { content: string, author: string, likedByUsers: string[], postId: number, slugName: string }) {
  const user = useSession();
+ const { theme } = useTheme();
+ const isDarkMode = theme === "dark";
  const currentUserLikedThePost = user.data?.user?.id == undefined ? false : likedByUsers.includes(user.data?.user?.id);
   useEffect(() => {
     const highlightAndAddCopyButtons = async () => {
@@ -39,6 +42,7 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
 
     highlightAndAddCopyButtons();
   }, [content]);
+  const fill = isDarkMode ? "#99a1af" : "#364153";
   return (
     <>
       <h2 className="pt-4 text-base italic font-thin">- {author}</h2>
@@ -54,10 +58,10 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
           <input type="hidden" name="userId" value={user.data?.user?.id ?? ""} />
           <input type="hidden" name="slugName" value={slugName} />
           <button type="submit" className="cursor-pointer">
-            <ThumbsUp className="text-gray-300 h-5 w-5" fill={currentUserLikedThePost ? "#99a1af" : undefined}  />
+            <ThumbsUp className="text-gray-700 dark:text-gray-300 h-5 w-5" fill={currentUserLikedThePost ? fill : "none"} />
           </button>
         </form>
-        {likedByUsers.length > 0 && <span className="text-sm text-gray-300">{likedByUsers.length} {likedByUsers.length === 1 ? "Like" : "Likes"}</span>}
+        {likedByUsers.length > 0 && <span className="text-sm dark:text-gray-300">{likedByUsers.length} {likedByUsers.length === 1 ? "Like" : "Likes"}</span>}
       </div>
 
       <article
