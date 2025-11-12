@@ -20,25 +20,25 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
     // highlight function
     const applyHighlight = () => {
       hljs.highlightAll();
-      const preBlocks = article.querySelectorAll("pre");
+      // const preBlocks = article.querySelectorAll("pre");
 
-      preBlocks.forEach((pre) => {
-        if (pre.querySelector(".copy-button")) return;
+      // preBlocks.forEach((pre) => {
+      //   if (pre.querySelector(".copy-button")) return;
 
-        const button = document.createElement("button");
-        button.textContent = "Copy";
-        button.className =
-          "copy-button absolute top-2 right-2 bg-gray-700 px-2 py-1 text-sm rounded hover:bg-gray-600 text-white";
-        button.addEventListener("click", () => {
-          const code = (pre as HTMLElement).innerText;
-          navigator.clipboard.writeText(code);
-          button.textContent = "Copied!";
-          setTimeout(() => (button.textContent = "Copy"), 2000);
-        });
+      //   const button = document.createElement("button");
+      //   button.textContent = "Copy";
+      //   button.className =
+      //     "copy-button absolute top-2 right-2 bg-gray-700 px-2 py-1 text-sm rounded hover:bg-gray-600 text-white";
+      //   button.addEventListener("click", () => {
+      //     const code = (pre as HTMLElement).innerText;
+      //     navigator.clipboard.writeText(code);
+      //     button.textContent = "Copied!";
+      //     setTimeout(() => (button.textContent = "Copy"), 2000);
+      //   });
 
-        (pre as HTMLElement).style.position = "relative";
-        pre.appendChild(button);
-      });
+      //   (pre as HTMLElement).style.position = "relative";
+      //   pre.appendChild(button);
+      // });
     };
 
     // watch for DOM updates inside <article>

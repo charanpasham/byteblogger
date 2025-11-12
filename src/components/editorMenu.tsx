@@ -5,6 +5,7 @@ import {
   AlignRight,
   Bold,
   Code2,
+  Highlighter,
   Image,
   Italic,
   Link2,
@@ -69,7 +70,7 @@ export const EditorMenu = () => {
     }
   };
   return (
-    <div className="mb-3 grid grid-cols-17 mx-auto gap-2 w-fit shadow-2xl">
+    <div className="mb-3 grid grid-cols-10 md:grid-cols-17 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
       <Button
         type="button"
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
@@ -83,6 +84,14 @@ export const EditorMenu = () => {
         className={editor.isActive("codeBlock") ? "bg-gray-500" : ""}
       >
         <Code2 />
+      </Button>
+
+      <Button
+        type="button"
+        onClick={() => editor.chain().focus().toggleHighlight().run()}
+        className={editor.isActive("highlight") ? "is-active" : ""}
+      >
+       <Highlighter />
       </Button>
 
       <Button
@@ -198,6 +207,37 @@ export const EditorMenu = () => {
         className={editor.isActive("link") ? "is-active" : ""}
       >
         <Link2 />
+      </Button>
+      <Button
+          type="button"
+          onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '1.5'}).run()}
+          className={editor.isActive("lineHeight", { lineHeight: '1.5' }) ? "is-active" : ""}
+        >
+            <span className="leading-3">1.5</span>
+          </Button>
+
+        <Button
+        type="button"
+        onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '2.0'}).run()}
+        className={editor.isActive("lineHeight", { lineHeight: '2.0' }) ? "is-active" : ""}
+      >
+        <span className="leading-3">2.0</span>
+      </Button>
+
+        <Button
+        type="button"
+        onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '4.0'}).run()}
+        className={editor.isActive("lineHeight", { lineHeight: '4.0' }) ? "is-active" : ""}
+      >
+        <span className="leading-3">4.0</span>
+      </Button>
+
+      <Button
+        type="button"
+        onClick={() => editor.chain().focus().toggleTextStyle( { fontFamily: '"Comic Sans MS", "Comic Sans"' }).run()}
+        className={editor.isActive("fontFamily", { fontFamily: '"Comic Sans MS", "Comic Sans"' }) ? "is-active" : ""}
+      >
+        <span className="leading-3">Comic Sans</span>
       </Button>
     </div>
   );

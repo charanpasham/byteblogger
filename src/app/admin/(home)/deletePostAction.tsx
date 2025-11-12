@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/server/db";
-import { users, posts, sessions } from "@/server/db/schema";
+import { posts } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 

@@ -19,12 +19,15 @@ import TextAlign from "@tiptap/extension-text-align";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import Link from "@tiptap/extension-link";
 import History from "@tiptap/extension-history";
-import Emoji, { gitHubEmojis } from "@tiptap-pro/extension-emoji";
-import FileHandler from "@tiptap-pro/extension-file-handler";
+import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
+import FileHandler from "@tiptap/extension-file-handler";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 import { EditorMenu } from "./editorMenu";
 import { EditorUploadAction } from "./editorUploadAction";
+import Highlight from "@tiptap/extension-highlight";
+import { TextStyle, LineHeight, FontFamily } from '@tiptap/extension-text-style'
+import Typography from '@tiptap/extension-typography'
 
 interface RichTextEditorProps {
   content: string;
@@ -43,7 +46,14 @@ export const RichTextEditor = ({
     Document,
     Paragraph,
     Bold,
+    Highlight.configure({
+      multicolor: true,
+    }),
+    TextStyle,
+    LineHeight,
+    FontFamily,
     Text,
+    Typography,
     CodeBlockLowlight.configure({
       lowlight,
       defaultLanguage: "javascript",
@@ -61,6 +71,7 @@ export const RichTextEditor = ({
     }),
     Placeholder.configure({
       placeholder: "Write something ...",
+      emptyEditorClass: 'is-editor-empty',
     }),
     TextAlign.configure({
       types: ["heading", "paragraph", "blockquote"],
@@ -81,7 +92,6 @@ export const RichTextEditor = ({
       ],
       onDrop: async (currentEditor, files, pos) => {
         const file = files[0] || null;
-        debugger;
         const utData = await EditorUploadAction(file);
         if (!utData) {
           return;
@@ -177,6 +187,7 @@ export const RichTextEditor = ({
         content={content}
         editorProps={editorProps}
         slotBefore={<EditorMenu />}
+        immediatelyRender = {false}
         onUpdate={({ editor }) => {
           // You can handle content updates here if needed
           const html = editor.getHTML();

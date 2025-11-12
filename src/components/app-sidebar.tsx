@@ -2,9 +2,6 @@
 import {
   Home,
   Settings,
-  Pencil,
-  PencilRuler,
-  UserRoundCheck,
 } from "lucide-react";
 
 import {
@@ -26,8 +23,6 @@ export function AppSidebar() {
   const paths = {
     "create-blog": "/admin/create-blog",
     "admin-home": "/admin",
-    "edit-blog": "/admin/edit-blog",
-    "modify-roles": "/admin/modify-roles",
     "admin-settings": "/admin/settings",
   };
   return (
@@ -48,38 +43,11 @@ export function AppSidebar() {
                 </SidebarMenuButton>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathName === paths["admin-home"]}
+                  isActive={pathName === paths["admin-home"] || pathName === paths["create-blog"]}
                 >
                   <Link href={paths["admin-home"]}>
                     <Home />
                     <span>Admin Home</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathName === paths["create-blog"]}
-                >
-                  <Link href={paths["create-blog"]}>
-                    <Pencil />
-                    <span>Create Blog</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathName === paths["edit-blog"]}
-                >
-                  <Link href={paths["edit-blog"]}>
-                    <PencilRuler />
-                    <span>Edit Blog</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathName === paths["modify-roles"]}
-                >
-                  <Link href={paths["modify-roles"]}>
-                    <UserRoundCheck />
-                    <span>Modify Roles</span>
                   </Link>
                 </SidebarMenuButton>
                 <SidebarMenuButton

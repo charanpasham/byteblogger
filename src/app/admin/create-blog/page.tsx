@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
+import { MoveLeft, SkipBack } from "lucide-react";
+import Link from "next/link";
 
 export default function CreateBlogPage() {
   const user = useSession();
@@ -53,7 +56,7 @@ export default function CreateBlogPage() {
           message: "This slug is already taken",
         });
       } else {
-        router.push(`/admin/edit-blog/${data.slug}`);
+        router.push(`/admin/edit/${data.slug}`);
       }
     } catch (e) {
       console.error(e);
@@ -61,7 +64,11 @@ export default function CreateBlogPage() {
   }
 
   return (
-    <Card className="p-5">
+    <>
+    <Link href="/admin" aria-label="Back">
+      <MoveLeft size={20} className="mb-5" />
+    </Link>
+      <Card className="p-5">
       <CardContent>
         <CardDescription className="my-5 text-xl font-bold">
           Create a new blog post
@@ -115,5 +122,7 @@ export default function CreateBlogPage() {
         </Form>
       </CardContent>
     </Card>
+    </>
+
   );
 }

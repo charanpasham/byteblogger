@@ -26,7 +26,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   body {
-    @apply font-sans !text-[21px] dark:text-gray-300
+    @apply font-sans !text-[18px] dark:text-gray-300
   }
 }
 
@@ -201,6 +201,15 @@
     @apply !cursor-pointer !font-semibold underline
   }
   pre {
-    @apply text-xs;
+    @apply text-sm;
   }
+}
+
+/* optional: make sure it applies even with Tailwind's .prose */
+.prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
