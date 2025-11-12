@@ -21,6 +21,7 @@ import Link from "@tiptap/extension-link";
 import History from "@tiptap/extension-history";
 import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
 import FileHandler from "@tiptap/extension-file-handler";
+import { Markdown } from "@tiptap/markdown";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 import { EditorMenu } from "./editorMenu";
@@ -52,6 +53,7 @@ export const RichTextEditor = ({
     TextStyle,
     LineHeight,
     FontFamily,
+    Markdown,
     Text,
     Typography,
     CodeBlockLowlight.configure({

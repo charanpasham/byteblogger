@@ -15,7 +15,7 @@ const config = {
     },
   },
   images: {
-    domains: ["lh3.googleusercontent.com", "o5vr90ifqp.ufs.sh"],
+    domains: ["lh3.googleusercontent.com", "o5vr90ifqp.ufs.sh", "media.licdn.com"],
   },
 };
 

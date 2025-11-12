@@ -6,7 +6,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LogInIcon, LogOut as LogOutIcon, Settings } from "lucide-react";
+import { LogOut as LogOutIcon, Settings } from "lucide-react";
 import { DropdownMenu } from "@/components/ui/dropdown";
 import {
   DropdownMenuContent,
@@ -35,35 +35,21 @@ export default function Header() {
     );
   };
 
-  const LogIn = () => {
-    if (session) {
-      return null;
-    }
-    return (
-      <Button
-        variant="default"
-        onClick={() => signIn("google")}
-        size={"sm"}
-        className="rounded bg-blue-800 dark:bg-blue-900 px-4 py-2 font-bold text-white hover:bg-blue-500 dark:hover:bg-blue-700 cursor-pointer"
-      >
-        Login <LogInIcon />
-      </Button>
-    );
-  };
-
-  const UserAvatar = () => {
-    if (!session || !session.user || !session.user.image) {
-      return null;
-    }
-    return (
-      <div className="flex items-center gap-1">
-        <Avatar>
-          <AvatarImage src={`${session?.user?.image}`} />
-        </Avatar>
-        {session && `${session.user?.name}`}
-      </div>
-    );
-  };
+  // const LogIn = () => {
+  //   if (session) {
+  //     return null;
+  //   }
+  //   return (
+  //     <Button
+  //       variant="default"
+  //       onClick={() => signIn("google")}
+  //       size={"sm"}
+  //       className="rounded bg-blue-800 dark:bg-blue-900 px-4 py-2 font-bold text-white hover:bg-blue-500 dark:hover:bg-blue-700 cursor-pointer"
+  //     >
+  //       Login <LogInIcon />
+  //     </Button>
+  //   );
+  // };
 
   const LogOutMenu = () => {
     if (status === "loading" || !session || !session.user) {
@@ -118,7 +104,7 @@ export default function Header() {
 
             <ModeToggle />
             <LogOutMenu />
-            <LogIn />
+            {/* <LogIn /> */}
           </>
         )}
       </nav>

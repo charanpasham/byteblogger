@@ -46,7 +46,6 @@ export async function UploadProfilePicture(imageUrl: string, id: string) {
 
 export const authConfig = {
   providers: [
-    DiscordProvider,
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
