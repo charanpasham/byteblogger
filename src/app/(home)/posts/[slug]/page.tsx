@@ -36,7 +36,13 @@ export default async function PostsPage({ params }: PostProps) {
   
   return (
     <>
-      <ViewBlogPage content={post[0]?.post.content ?? ""} author={post[0]?.user?.name ?? ""} likedByUsers={postLikesData.map(x => x.userId)} postId={post[0]?.post.id ?? 0} slugName={post[0]?.post.slug ?? ""} />
+      <ViewBlogPage 
+          content={post[0]?.post.content ?? ""}
+          author={post[0]?.user?.name ?? ""}
+          likedByUsers={postLikesData.map(x => x.userId)}
+          postId={post[0]?.post.id ?? 0}
+          slugName={post[0]?.post.slug ?? ""} 
+          viewCount={post[0]?.post.viewCount ?? 0} />
     </>
   );
 }

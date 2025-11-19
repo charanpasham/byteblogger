@@ -129,6 +129,7 @@ export const posts = createTable(
       .default(null),
     isPinned: d.boolean().notNull().default(false),
     pinnedOrder: d.integer().$type<number | null>().default(null),
+    viewCount: d.integer().notNull().default(0),
   }),
   (t) => [index("created_by_idx").on(t.userId), index("slug_idx").on(t.slug)],
 );
