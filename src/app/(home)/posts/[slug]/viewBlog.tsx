@@ -82,7 +82,7 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
         <PostViews />
       </div>
       <article
-        className={`tiptap proseMirror mt-5 mb-10 min-h-full`}
+        className={`tiptap proseMirror mt-5 mb-10 min-h-full !text-md md:!text-lg`}
         dangerouslySetInnerHTML={{ __html: content || "" }}
       />
     </>

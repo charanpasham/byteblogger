@@ -23,6 +23,7 @@ export function AppSidebar() {
   const paths = {
     "create-blog": "/admin/create-blog",
     "admin-home": "/admin",
+    "tags-management": "/admin/tags-management",
     "admin-settings": "/admin/settings",
   };
   return (
@@ -48,6 +49,15 @@ export function AppSidebar() {
                   <Link href={paths["admin-home"]}>
                     <Home />
                     <span>Admin Home</span>
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathName === paths["tags-management"]}
+                >
+                  <Link href={paths["tags-management"]}>
+                    <Home />
+                    <span>Tag Management</span>
                   </Link>
                 </SidebarMenuButton>
                 <SidebarMenuButton

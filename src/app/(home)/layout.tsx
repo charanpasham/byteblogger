@@ -36,7 +36,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
       </head>
-      <body className="dark:bg-[#1a1a1a] antialiased max-w-3xl mx-4 mt-8 lg:mx-auto">
+      <body className="dark:bg-[#1a1a1a] antialiased max-w-3xl mx-1 mt-8 lg:mx-auto">
         <main className="flex-auto min-w-0 mt-6 flex flex-col px-4 md:px-6 lg:px-8">
           <ThemeProvider
             attribute="class"
