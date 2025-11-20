@@ -65,12 +65,12 @@
     "drizzle-seed": "^0.3.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.487.0",
-    "next": "16.0.3",
+    "next": "^15.2.3",
     "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.4.6",
     "postgres": "^3.4.4",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "tailwind-merge": "^3.1.0",
     "tippy.js": "^6.3.7",
@@ -82,11 +82,11 @@
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/node": "^20.17.30",
-    "@types/react": "19.2.6",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "drizzle-kit": "^0.30.5",
     "eslint": "^9.23.0",
-    "eslint-config-next": "16.0.3",
+    "eslint-config-next": "^15.2.3",
     "eslint-plugin-drizzle": "^0.2.3",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
@@ -98,9 +98,5 @@
   "ct3aMetadata": {
     "initVersion": "7.39.2"
   },
-  "packageManager": "npm@11.2.0",
-  "overrides": {
-    "@types/react": "19.2.6",
-    "@types/react-dom": "19.2.3"
-  }
+  "packageManager": "npm@11.2.0"
 }
