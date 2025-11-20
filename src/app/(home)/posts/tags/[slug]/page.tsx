@@ -32,7 +32,7 @@ export default async function PostByTag({ params }: PostProps) {
     .leftJoin(users, eq(posts.userId, users.id))
     .where(
       and(
-        eq(posttags.name, slug),
+        eq(posttags.tagSlug, slug),
         eq(posts.isPublished, true)
       )
     )

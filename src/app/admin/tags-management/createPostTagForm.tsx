@@ -20,6 +20,12 @@ export function CreatePostTagForm() {
                     placeholder="Tag Name"
                     required
                 />
+                <Input
+                    type="text"
+                    name="tagSlug"
+                    placeholder="Tag Slug"
+                    required
+                />
                 <Button
                     type="submit"
                     variant={"secondary"}

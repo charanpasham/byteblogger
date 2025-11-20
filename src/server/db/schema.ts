@@ -138,12 +138,13 @@ export const posttags = createTable(
   (d) => ({
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
     name: d.varchar({ length: 100 }).notNull().unique(),
+    tagSlug: d.varchar({ length: 150 }).notNull().unique(),
     createdAt: d
       .timestamp({ withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   }),
-  (t) => [index("post_tags_name_idx").on(t.name)],
+  (t) => [index("post_tags_name_idx").on(t.name), index("post_tags_tag_slug_idx").on(t.tagSlug)],
 );
 
 export const posttagmapping = createTable(

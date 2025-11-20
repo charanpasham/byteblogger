@@ -6,6 +6,12 @@ import { revalidatePath } from "next/cache";
 
 export const CreateTagAction = async (prevState: { error: string | null }, formData: FormData) => {
     const tagName = formData.get("tagName") as string;
+    const tagSlug = formData.get("tagSlug") as string;
+    if (!tagName || !tagSlug) {
+        return {
+            error: "Tag name and slug are required"
+        };
+    }
     const existingTag = await db
       .select()
       .from(posttags)
@@ -16,7 +22,7 @@ export const CreateTagAction = async (prevState: { error: string | null }, formD
         };
     }
 
-    await db.insert(posttags).values({ name: tagName });
+    await db.insert(posttags).values({ name: tagName, tagSlug: tagSlug });
     revalidatePath("/admin/tags-management");
     return {
         error:null

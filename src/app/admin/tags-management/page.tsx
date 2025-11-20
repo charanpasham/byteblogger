@@ -3,8 +3,6 @@ import { posttags, posttagmapping } from "@/server/db/schema";
 import { CreatePostTagForm } from "./createPostTagForm";
 import { Badge } from "@/components/ui/badge";
 import { eq, sql } from "drizzle-orm";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DeleteTagForm } from "./deleteTagForm";
 
 export default async function TagsManagementPage() {
