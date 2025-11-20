@@ -198,6 +198,12 @@ export const postLikesRelations = relations(postLikes, ({ one }) => ({
   user: one(users, { fields: [postLikes.userId], references: [users.id] }),
 }));
 
+
+export const postsRelations = relations(posts, ({ many, one }) => ({
+  user: one(users, { fields: [posts.userId], references: [users.id] }),
+  post_likes: many(postLikes),
+}));
+
 export const comments = createTable("comments", (d) => ({
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   content: d.text().notNull(),

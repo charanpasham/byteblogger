@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
-import { postLikes, posts, users } from "@/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { posts } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 import ViewBlogPage from "./viewBlog";
 
 interface PostProps {
@@ -14,35 +14,28 @@ export default async function PostsPage({ params }: PostProps) {
   if (!slug) {
     return <div className="container mx-auto px-4 py-16">Invalid post slug</div>;
   }
-  const post = await db
-    .select()
-    .from(posts)
-    .where(
-      and(
-        eq(posts.slug, slug), eq(posts.isPublished, true)
-      )
-    )
-    .leftJoin(users, eq(posts.userId, users.id))
-    .limit(1);
 
-  const postLikesData = await db
-    .select()
-    .from(postLikes)
-    .where(eq(postLikes.postId, post[0]?.post.id || 0));
+  const post = await db.query.posts.findFirst({
+    where: eq(posts.slug, slug),
+    with: {
+      user: true,
+      post_likes: true,
+    }
+  });
 
-  if (post.length === 0) {
+  if (!post) {
     return <div className="container mx-auto px-4 py-16">Post not found</div>;
   }
   
   return (
     <>
       <ViewBlogPage 
-          content={post[0]?.post.content ?? ""}
-          author={post[0]?.user?.name ?? ""}
-          likedByUsers={postLikesData.map(x => x.userId)}
-          postId={post[0]?.post.id ?? 0}
-          slugName={post[0]?.post.slug ?? ""} 
-          viewCount={post[0]?.post.viewCount ?? 0} />
+          content={post?.content ?? ""}
+          author={post?.user?.name ?? ""}
+          likedByUsers={post?.post_likes.map(like => like.userId) ?? []}
+          postId={post?.id ?? 0}
+          slugName={post?.slug ?? ""} 
+          viewCount={post?.viewCount ?? 0} />
     </>
   );
 }
