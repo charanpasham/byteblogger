@@ -5,6 +5,8 @@ import { Geist } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { requireAuth } from "@/lib/authGuard";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "Byte Blog",
@@ -40,16 +42,19 @@ export default async function RootLayout({
       </head>
       <body className="dark:bg-[#1a1a1a] antialiased mx-4 mt-8">
         <main>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SessionProvider>
-              {children}
-            </SessionProvider>
-          </ThemeProvider>
+          <TooltipProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <SessionProvider>
+                {children}
+                <Toaster />
+              </SessionProvider>
+            </ThemeProvider>
+          </TooltipProvider>
         </main>
 
       </body>

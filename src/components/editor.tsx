@@ -29,6 +29,10 @@ import { EditorUploadAction } from "./editorUploadAction";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle, LineHeight, FontFamily } from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
+import { useEffect, useState } from "react";
+import { toast } from "sonner"; 
+import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface RichTextEditorProps {
   content: string;
@@ -182,6 +186,43 @@ export const RichTextEditor = ({
     },
   };
 
+  const [blogHtml, setBlogHtml] = useState(content);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onSubmit(blogHtml);
+        toast.success("Blog content saved!");
+      }
+    }
+    window.addEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [blogHtml, onSubmit]);
+
+
+const SubmitButton = () => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button
+        className="flex justify-center items-center mx-auto"
+        onClick={() => {
+          onSubmit(blogHtml);
+          toast.success("Blog content saved!");
+        }}
+      >
+        Save Content
+      </Button>
+    </TooltipTrigger>
+
+    <TooltipContent>
+      Keyboard shortcut: (Cmd/Ctrl + s)
+    </TooltipContent>
+  </Tooltip>
+);
+
   return (
     <article className="rounded p-4 mx-4 mt-8 lg:mx-auto">
       <EditorProvider
@@ -191,11 +232,10 @@ export const RichTextEditor = ({
         slotBefore={<EditorMenu />}
         immediatelyRender = {false}
         onUpdate={({ editor }) => {
-          // You can handle content updates here if needed
-          const html = editor.getHTML();
-          // console.log("Editor content updated:", html);
-          onSubmit(html);
+          setBlogHtml(editor.getHTML());
         }}
+        slotAfter={<SubmitButton />}
+
       >
 
       </EditorProvider>

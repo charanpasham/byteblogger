@@ -70,7 +70,8 @@ export const EditorMenu = () => {
     }
   };
   return (
-    <div className="mb-3 grid grid-cols-10 md:grid-cols-17 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
+    <div className="sticky top-0 z-50 backdrop-blur-md
+             mb-3 grid grid-cols-8 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
       <Button
         type="button"
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
