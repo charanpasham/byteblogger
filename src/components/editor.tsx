@@ -224,7 +224,7 @@ const SubmitButton = () => (
 );
 
   return (
-    <article className="rounded p-4 mx-4 mt-8 lg:mx-auto">
+    <article className="rounded md:p-4 md:mx-4 mt-8 lg:mx-auto">
       <EditorProvider
         extensions={extensions}
         content={content}

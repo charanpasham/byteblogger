@@ -71,7 +71,7 @@ export const EditorMenu = () => {
   };
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md
-             mb-3 grid grid-cols-8 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
+             mb-3 grid grid-cols-10 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
       <Button
         type="button"
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
@@ -192,12 +192,12 @@ export const EditorMenu = () => {
       >
         <Redo2 />
       </Button>
-      <Button
+      {/* <Button
         type="button"
         onClick={() => editor.chain().focus().setEmoji("zap").run()}
       >
         ⚡
-      </Button>
+      </Button> */}
       <Button type="button" onClick={addYoutubeVideo}>
         <Video />
       </Button>
@@ -233,13 +233,13 @@ export const EditorMenu = () => {
         <span className="leading-3">4.0</span>
       </Button>
 
-      <Button
+      {/* <Button
         type="button"
         onClick={() => editor.chain().focus().toggleTextStyle( { fontFamily: '"Comic Sans MS", "Comic Sans"' }).run()}
         className={editor.isActive("fontFamily", { fontFamily: '"Comic Sans MS", "Comic Sans"' }) ? "is-active" : ""}
       >
         <span className="leading-3">Comic Sans</span>
-      </Button>
+      </Button> */}
     </div>
   );
 };
