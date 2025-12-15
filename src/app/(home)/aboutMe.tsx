@@ -6,7 +6,7 @@ export function AboutMe() {
     return(
         <>
             <h2 className="text-lg font-semibold">About Me</h2>
-            <Image src="https://media.licdn.com/dms/image/v2/C5603AQGP6BIGUu9IfQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1542478223844?e=1764806400&v=beta&t=rJpa1VUEf1SkermJo8Cqx4crg6BY-yqIaZkKluMUOS8" width={200} height={200} alt="Profile Picture" className="rounded-full mx-auto" />
+            <Image src="https://o5vr90ifqp.ufs.sh/f/FbmnsVAMglOuCrVi7c86VLCjOlv1KDwzMdkNhA50ycbugq28" width={200} height={200} alt="Profile Picture" className="rounded-full mx-auto" />
             <p className="text-base text-gray-800 dark:text-gray-300">
               Hi, I'm Charan! I'm a software engineer who loves turning ideas into reality through code. I love exploring new tech and sharing my journey here on Byte Blogger.
             </p>
