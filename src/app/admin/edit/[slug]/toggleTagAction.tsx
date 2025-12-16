@@ -12,28 +12,25 @@ export async function ToggleTagAction(
     slug: string,
     shouldAssign: boolean,
 ): Promise<void> {
-    console.log("ToggleTagAction called with:", { postId, tagId, slug, shouldAssign });
-
     const existingMapping = await db
         .select()
         .from(posttagmapping)
         .where(and(eq(posttagmapping.postId, postId), eq(posttagmapping.tagId, tagId)));
     
-     console.log("Existing mapping:", existingMapping);
-     if(shouldAssign && existingMapping.length > 0) {
-        console.log("Mapping already exists, no action taken.");
+    if (shouldAssign && existingMapping.length > 0) {
         return;
     }
-    if(!shouldAssign && existingMapping.length === 0) {
-        console.log("Mapping does not exist, no action taken.");
+    if (!shouldAssign && existingMapping.length === 0) {
         return;
     }
     
     if (shouldAssign) {
-        await db.insert(posttagmapping).values({ postId: postId, tagId: tagId });
+        await db.insert(posttagmapping).values({ postId, tagId });
     } else {
-        await db.delete(posttagmapping).where(and(eq(posttagmapping.postId, postId), eq(posttagmapping.tagId, tagId))
-        ).returning();
+        await db
+            .delete(posttagmapping)
+            .where(and(eq(posttagmapping.postId, postId), eq(posttagmapping.tagId, tagId)))
+            .returning();
     }
     revalidatePath(`/admin/edit/${slug}`);
 }

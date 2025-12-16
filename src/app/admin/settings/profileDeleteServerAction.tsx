@@ -4,9 +4,8 @@ import { users, accounts, sessions } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
+
 export const ProfileDeleteServerAction = async (email: string) => {
-  "use server";
-  // For example, you might want to call an API to delete the user
   const user = await db
     .select({ id: users.id })
     .from(users)

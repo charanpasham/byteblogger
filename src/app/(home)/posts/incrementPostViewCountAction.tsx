@@ -1,10 +1,8 @@
 "use server";
-import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { postLikes, posts } from "@/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { posts } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function IncrementPostViewCount(postId: number, slugName: string) {
   const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);

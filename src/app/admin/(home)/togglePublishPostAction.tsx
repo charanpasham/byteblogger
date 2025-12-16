@@ -13,5 +13,5 @@ export const TogglePublishPostAction = async (formData: FormData) => {
 
     await db.update(posts).set({ isPublished: !post[0]?.isPublished }).where(eq(posts.id, id));
 
-    revalidatePath("/admin/edit-blog");
+    revalidatePath("/admin");
 };

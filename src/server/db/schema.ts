@@ -27,19 +27,6 @@ export const users = createTable("user", (d) => ({
   role: d.varchar({ length: 255 }).notNull().default("user"),
 }));
 
-export const roles = createTable("role", (d) => ({
-  id: d
-    .varchar({ length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: d.varchar({ length: 255 }).notNull().unique(),
-  createdAt: d
-    .timestamp({ withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-}));
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
