@@ -19,7 +19,7 @@ import {
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
-import { MoveLeft, SkipBack } from "lucide-react";
+import { MoveLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function CreateBlogPage() {
@@ -58,8 +58,11 @@ export default function CreateBlogPage() {
       } else {
         router.push(`/admin/edit/${data.slug}`);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      form.setError("root", {
+        type: "manual",
+        message: "An error occurred while creating the blog post",
+      });
     }
   }
 

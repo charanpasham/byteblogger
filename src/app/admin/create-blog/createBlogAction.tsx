@@ -1,10 +1,7 @@
 "use server";
-import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-
 import { posts } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
 
 export interface BlogResponse {
   id: string | null;
@@ -20,7 +17,7 @@ export async function CreateBlogAction(
   const blogs = await db
     .select()
     .from(posts)
-    .where((table) => eq(table.slug, slug));
+    .where(eq(posts.slug, slug));
 
   if (blogs.length > 0) {
     return {

@@ -1,30 +1,87 @@
-# Create T3 App
+# Byte Blogger
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-Change here from origin/dev
-Change from just dev
-## What's next? How do I make an app with this?
+A modern blog platform built with Next.js, featuring a rich text editor, authentication, and admin dashboard.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Features
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- 📝 Rich text blog editor with TipTap
+- 🔐 Google OAuth authentication
+- 👤 User profiles and role-based access
+- 🏷️ Tag management system
+- 📊 Post analytics (views, likes)
+- 📌 Pin/unpin posts
+- 🌓 Dark mode support
+- 📱 Responsive design
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Tech Stack
 
-## Learn More
+- **Framework:** Next.js 16
+- **Database:** PostgreSQL with Drizzle ORM
+- **Authentication:** NextAuth.js v5
+- **Styling:** Tailwind CSS
+- **Editor:** TipTap
+- **File Uploads:** UploadThing
+- **UI Components:** Radix UI
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Getting Started
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+### Prerequisites
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- Node.js 18+
+- PostgreSQL database
+- Google OAuth credentials
 
-## How do I deploy this?
+### Installation
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```env
+   DATABASE_URL=your_postgresql_connection_string
+   AUTH_SECRET=your_auth_secret
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   ```
+
+4. Set up the database:
+   ```bash
+   npm run db:push
+   ```
+
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run db:push` - Push database schema changes
+- `npm run db:studio` - Open Drizzle Studio
+- `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript type checking
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js app router pages
+│   ├── (home)/      # Public blog pages
+│   ├── admin/       # Admin dashboard
+│   └── api/         # API routes
+├── components/      # React components
+├── server/          # Server-side code
+│   ├── auth/       # Authentication configuration
+│   └── db/         # Database schema and connection
+└── lib/            # Utility functions
+```
+
+## License
+
+Private project - All rights reserved

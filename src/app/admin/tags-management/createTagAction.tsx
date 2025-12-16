@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { db } from "@/server/db";
 import { posttags } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
@@ -22,9 +22,9 @@ export const CreateTagAction = async (prevState: { error: string | null }, formD
         };
     }
 
-    await db.insert(posttags).values({ name: tagName, tagSlug: tagSlug });
+    await db.insert(posttags).values({ name: tagName, tagSlug });
     revalidatePath("/admin/tags-management");
     return {
-        error:null
+        error: null,
     };
 }

@@ -1,8 +1,7 @@
 "use server";
 import { db } from "@/server/db";
-
 import { posts } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export interface BlogUpdateResponse {
@@ -19,7 +18,7 @@ export async function UpdateBlogAction(
   const blogs = await db
     .select()
     .from(posts)
-    .where((table) => eq(table.slug, slug) && eq(table.userId, userId));
+    .where(and(eq(posts.slug, slug), eq(posts.userId, userId)));
 
   if (blogs.length === 0) {
     return {
@@ -35,7 +34,7 @@ export async function UpdateBlogAction(
     })
     .where(eq(posts.slug, slug))
     .returning({ id: posts.id });
-  revalidatePath(`/admin/edit-blog/${slug}`);
+  revalidatePath(`/admin/edit/${slug}`);
   return {
     id: updatedPost[0]?.id.toString(),
     isUpdated: true,
@@ -44,8 +43,10 @@ export async function UpdateBlogAction(
 
 export async function UpdateTitle(title: string, slug: string): Promise<void> {
   await db.update(posts).set({ title }).where(eq(posts.slug, slug));
+  revalidatePath(`/admin/edit/${slug}`);
 }
 
 export async function UpdateDescription(description: string, slug: string): Promise<void> {
-  await db.update(posts).set({ description }).where(eq(posts.slug, slug));  
+  await db.update(posts).set({ description }).where(eq(posts.slug, slug));
+  revalidatePath(`/admin/edit/${slug}`);
 }

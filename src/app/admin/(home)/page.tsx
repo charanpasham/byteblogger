@@ -20,7 +20,7 @@ export default async function Admin() {
   const blogs = await db
     .select()
     .from(posts)
-    .where((table) => eq(table.userId, session.user.id))
+    .where(eq(posts.userId, session.user.id))
     .orderBy(posts.createdAt);
   // protect the admin page
   return (
