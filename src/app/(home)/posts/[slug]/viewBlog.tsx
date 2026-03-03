@@ -76,23 +76,25 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
     </div>
   );
   return (
-    <div className="rounded-2xl border bg-card/80 px-4 pb-8 pt-6 shadow-sm sm:px-6 md:px-8">
+    <div className="w-full min-w-0 overflow-x-clip rounded-2xl border bg-card/80 px-2 pb-8 pt-6 shadow-sm sm:px-4 md:px-6 lg:px-8">
       <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-3">
-        <p className="text-sm text-muted-foreground">
+        <p className="min-w-0 text-sm text-muted-foreground">
           Written by{" "}
           <span className="font-medium text-foreground">
             {author || "Unknown author"}
           </span>
         </p>
-        <div className="flex gap-4">
+        <div className="flex shrink-0 gap-4">
           <LikeButton />
           <PostViews />
         </div>
       </div>
-      <article
-        className="tiptap proseMirror mt-6 mb-4 min-h-full !text-[0.95rem] leading-relaxed md:!text-[1.02rem]"
-        dangerouslySetInnerHTML={{ __html: content || "" }}
-      />
+      <div className="w-full min-w-0 overflow-x-clip">
+        <article
+          className="tiptap proseMirror mt-6 mb-4 min-h-full w-full min-w-0 !text-[0.95rem] leading-relaxed md:!text-[1.02rem]"
+          dangerouslySetInnerHTML={{ __html: content || "" }}
+        />
+      </div>
     </div>
   );
 }

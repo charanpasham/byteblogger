@@ -13,7 +13,7 @@ export default async function PostsPage({ params }: PostProps) {
   const { slug } = await params;
   if (!slug) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-muted-foreground">
+      <div className="mx-auto max-w-3xl px-2 py-16 text-sm text-muted-foreground sm:px-4">
         Invalid post slug
       </div>
     );
@@ -29,14 +29,14 @@ export default async function PostsPage({ params }: PostProps) {
 
   if (!post) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-muted-foreground">
+      <div className="mx-auto max-w-3xl px-2 py-16 text-sm text-muted-foreground sm:px-4">
         Post not found
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto min-w-0 max-w-3xl overflow-x-clip w-full px-2 py-10 sm:px-4">
       <ViewBlogPage
         content={post.content ?? ""}
         author={post.user?.name ?? ""}

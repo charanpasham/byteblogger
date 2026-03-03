@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   }
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
@@ -36,8 +42,8 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
       </head>
-      <body className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
-        <main className="flex-auto min-w-0 mt-8 flex flex-col px-4 md:px-8 lg:px-10 max-w-5xl mx-auto">
+      <body className="min-h-screen overflow-x-clip bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
+        <main className="mx-auto min-w-0 max-w-5xl flex flex-auto flex-col overflow-x-clip px-2 pt-8 sm:px-4 md:px-8 lg:px-10">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

@@ -14,7 +14,7 @@ interface PostProps {
 export default async function PostByTag({ params }: PostProps) {
   const { slug } = await params;
   if (!slug) {
-    return <div className="container mx-auto px-4 py-16">Invalid tag</div>;
+    return <div className="container mx-auto px-2 py-16 sm:px-4">Invalid tag</div>;
   }
 
   const postsByTag = await db.select(

@@ -94,8 +94,11 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 md:px-8">
+    <header
+      className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur pt-[env(safe-area-inset-top)]"
+      style={{ minHeight: "calc(4rem + env(safe-area-inset-top, 0px))" }}
+    >
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-2 sm:px-4 md:px-8">
         <h1 className="text-xl font-semibold tracking-tight md:text-2xl">
           <Link href="/" className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
             Byte Blogger
