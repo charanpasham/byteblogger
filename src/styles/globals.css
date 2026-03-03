@@ -153,56 +153,90 @@
 }
 
 .tiptap blockquote {
-  @apply mx-0 my-[1.5rem] border-l-4 border-l-gray-600 pl-4 bg-gray-50
-}
-
-.tiptap ul {
-  @apply !list-disc !pl-5;
+  @apply mx-0 my-6 border-l-4 border-l-slate-300 bg-slate-50 px-4 py-3 italic text-slate-700 dark:border-l-slate-600 dark:bg-slate-900/60 dark:text-slate-200;
 }
 
 .tiptap pre {
-  @apply !my-4;
+  @apply !my-4 w-full max-w-full overflow-x-auto rounded-lg bg-slate-950/95 text-slate-50;
   .hljs {
-    @apply !rounded-lg;
+    @apply !rounded-lg min-w-full;
   }
 }
 
 /* Basic editor styles */
 .tiptap {
-  @apply [&>:first-child]:mt-0;
+  @apply text-[0.95rem] leading-relaxed md:text-[1.02rem] [&>:first-child]:mt-0;
 
   img {
-    @apply rounded-xl;
+    @apply my-4 max-h-[480px] w-full rounded-xl object-cover;
   }
+
   /* List styles */
   ul,
   ol {
-    @apply my-5 mr-1.5 ml-[0.4rem] px-4; /* ml-[0.4rem] for ~6.4px = 0.4rem */
+    @apply my-4 list-outside pl-5;
 
     li p {
-      @apply mt-[0.25em] mb-[0.25em];
+      @apply my-0.5;
     }
   }
 
+  ul {
+    @apply list-disc;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+
   p {
-    @apply my-4 leading-7;
+    @apply my-4;
   }
 
   h1 {
-    @apply my-4 text-2xl md:text-3xl font-bold;
+    @apply mb-3 mt-6 text-2xl font-bold tracking-tight md:text-3xl;
   }
+
   h2 {
-    @apply my-3 font-bold text-xl md:text-2xl
+    @apply mb-2 mt-6 text-xl font-semibold tracking-tight md:text-2xl;
   }
+
   h3 {
-    @apply my-2 font-bold text-lg md:text-xl;
+    @apply mb-2 mt-5 text-lg font-semibold tracking-tight md:text-xl;
   }
+
   a {
-    @apply !cursor-pointer !font-semibold underline
+    @apply font-semibold text-sky-600 underline underline-offset-2 hover:text-sky-700 dark:text-sky-300 dark:hover:text-sky-200;
   }
+
   pre {
-    @apply text-sm;
+    @apply px-3 py-3 text-xs md:text-sm;
   }
+
+  hr {
+    @apply my-6 border-t border-dashed border-border;
+  }
+
+  table {
+    @apply my-4 w-full border-collapse text-sm;
+  }
+
+  th,
+  td {
+    @apply border border-border px-3 py-2;
+  }
+
+  th {
+    @apply bg-slate-50 text-left font-medium dark:bg-slate-900/60;
+  }
+}
+
+.tiptap code {
+  @apply break-words rounded bg-slate-100 px-1.5 py-0.5 text-[0.85em] font-mono text-slate-800 dark:bg-slate-800 dark:text-slate-100;
+}
+
+.tiptap pre code {
+  @apply block w-full min-w-0 bg-transparent p-0 text-[0.85em];
 }
 
 /* optional: make sure it applies even with Tailwind's .prose */
