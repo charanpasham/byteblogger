@@ -182,7 +182,7 @@ export const RichTextEditor = ({
   const editorProps = {
     attributes: {
       class:
-        "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mb-2 max-w-xl mx-auto focus:outline-none p-4 rounded-lg min-h-[80vh]",
+        "prose prose-sm sm:prose-base lg:prose-lg mb-2 max-w-3xl mx-auto focus:outline-none p-4 rounded-xl border border-border/60 bg-background/80 dark:bg-slate-900/60 min-h-[70vh]",
     },
   };
 
@@ -203,28 +203,29 @@ export const RichTextEditor = ({
   }, [blogHtml, onSubmit]);
 
 
-const SubmitButton = () => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Button
-        className="flex justify-center items-center mx-auto"
-        onClick={() => {
-          onSubmit(blogHtml);
-          toast.success("Blog content saved!");
-        }}
-      >
-        Save Content
-      </Button>
-    </TooltipTrigger>
+  const SubmitButton = () => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          className="mx-auto flex items-center justify-center"
+          size="sm"
+          onClick={() => {
+            onSubmit(blogHtml);
+            toast.success("Blog content saved!");
+          }}
+        >
+          Save content
+        </Button>
+      </TooltipTrigger>
 
-    <TooltipContent>
-      Keyboard shortcut: (Cmd/Ctrl + s)
-    </TooltipContent>
-  </Tooltip>
-);
+      <TooltipContent>
+        Keyboard shortcut: (Cmd/Ctrl + S)
+      </TooltipContent>
+    </Tooltip>
+  );
 
   return (
-    <article className="rounded md:p-4 md:mx-4 mt-8 lg:mx-auto">
+    <article className="mt-6 rounded md:mx-0 md:p-0">
       <EditorProvider
         extensions={extensions}
         content={content}

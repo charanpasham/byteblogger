@@ -12,7 +12,11 @@ interface PostProps {
 export default async function PostsPage({ params }: PostProps) {
   const { slug } = await params;
   if (!slug) {
-    return <div className="container mx-auto px-4 py-16">Invalid post slug</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-muted-foreground">
+        Invalid post slug
+      </div>
+    );
   }
 
   const post = await db.query.posts.findFirst({
@@ -24,18 +28,23 @@ export default async function PostsPage({ params }: PostProps) {
   });
 
   if (!post) {
-    return <div className="container mx-auto px-4 py-16">Post not found</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-muted-foreground">
+        Post not found
+      </div>
+    );
   }
-  
+
   return (
-    <>
-      <ViewBlogPage 
-          content={post?.content ?? ""}
-          author={post?.user?.name ?? ""}
-          likedByUsers={post?.post_likes.map(like => like.userId) ?? []}
-          postId={post?.id ?? 0}
-          slugName={post?.slug ?? ""} 
-          viewCount={post?.viewCount ?? 0} />
-    </>
+    <div className="mx-auto max-w-3xl px-4 py-10">
+      <ViewBlogPage
+        content={post.content ?? ""}
+        author={post.user?.name ?? ""}
+        likedByUsers={post.post_likes.map((like) => like.userId) ?? []}
+        postId={post.id ?? 0}
+        slugName={post.slug ?? ""}
+        viewCount={post.viewCount ?? 0}
+      />
+    </div>
   );
 }

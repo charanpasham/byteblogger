@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert } from "@/components/ui/alert";
 import { PinIcon } from "lucide-react";
 
 type PostProps = {
@@ -20,36 +19,58 @@ type PostProps = {
 
 export function PostGrid( { posts, heading}: { posts: PostProps[], heading: string } ) {
     return (
-          <div className="flex flex-col gap-1 w-full md:w-2/3">
-              <h2 className="mb-5 text-lg font-semibold">{heading}</h2>
+          <div className="flex w-full flex-col gap-4 md:w-2/3">
+              <div className="flex items-baseline justify-between gap-2">
+                <h2 className="text-base font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  {heading}
+                </h2>
+                {posts.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {posts.length} {posts.length === 1 ? "post" : "posts"}
+                  </span>
+                )}
+              </div>
               {posts.length > 0 ? (
-                <>
+                <div className="mt-2 space-y-3">
                   {posts.map((post) => (
                     <Link
                       href={`/posts/${post.slug}`}
                       key={post.slug}
-                      className="w-full max-w-3xl space-y-3 py-2"
+                      className="block w-full max-w-3xl"
                     >
-                      <Card className="dark:bg-[#181818]">
-                        <CardHeader>
-                          <CardTitle className="text-xl font-semibold flex justify-between">
-                            {post.title}
-                            <PinIcon className={post.isPinned ? "h-4 w-4 text-blue-500" : "hidden"} />
+                      <Card className="border border-border/60 bg-card/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                        <CardHeader className="space-y-2">
+                          <CardTitle className="flex items-start justify-between gap-2 text-lg font-semibold">
+                            <span className="line-clamp-2">{post.title}</span>
+                            {post.isPinned && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
+                                <PinIcon className="h-3 w-3" />
+                                Pinned
+                              </span>
+                            )}
                           </CardTitle>
-                          <CardDescription>{post.description}</CardDescription>
+                          <CardDescription className="line-clamp-2">
+                            {post.description}
+                          </CardDescription>
                         </CardHeader>
-                        <CardFooter>
-                          <div className="text-gray-500 text-xs">
-                            <p>{post.authorName}</p>
-                            { post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Unknown date" }
-                          </div>
+                        <CardFooter className="flex items-center justify-between pt-4 text-xs text-muted-foreground">
+                          <p className="font-medium">
+                            {post.authorName ?? "Unknown author"}
+                          </p>
+                          <p>
+                            {post.createdAt
+                              ? new Date(post.createdAt).toLocaleDateString()
+                              : "Unknown date"}
+                          </p>
                         </CardFooter>
                       </Card>
                     </Link>
                   ))}
-                </>
+                </div>
               ) : (
-                <Alert>No blog posts available.</Alert>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  No blog posts available yet. Check back soon!
+                </p>
               )}
           </div>
     )

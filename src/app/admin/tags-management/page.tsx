@@ -18,32 +18,55 @@ const tags = await db
                     .groupBy(posttags.id)
                     .orderBy(posttags.createdAt);
 
- const TagNames = () => {
+  const TagNames = () => {
     if (tags.length === 0) {
-      return <p>No tags available.</p>;
+      return (
+        <p className="text-sm text-muted-foreground">
+          No tags yet. Create your first tag to organize posts.
+        </p>
+      );
     }
     return (
-      <div className="flex flex-col self-start gap-1">
+      <div className="flex flex-col gap-3">
         {tags.map((tag) => (
-            <div key={tag.id} className="flex items-baseline gap-2">
-                <Badge variant={"secondary"} className="mb-2 text-md">
-                    {tag.name}
-                </Badge>
-                <span className="text-sm text-gray-500">Used {tag.count ?? 0} times</span>
-                <DeleteTagForm tagId={tag.id} />
+          <div key={tag.id} className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <Badge variant={"secondary"} className="text-sm">
+                {tag.name}
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                Used {tag.count ?? 0} {tag.count === 1 ? "time" : "times"}
+              </span>
             </div>
+            <DeleteTagForm tagId={tag.id} />
+          </div>
         ))}
       </div>
     );
- };
-  return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-8">Tags Management</h1>
-        <div className="flex flex-col gap-8">
-            <CreatePostTagForm />
-            <TagNames />
-        </div>
+  };
 
+  return (
+    <div className="mx-auto max-w-4xl space-y-8 py-8">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Tags management</h1>
+        <p className="text-sm text-muted-foreground">
+          Create, view, and delete tags used to organize your posts.
+        </p>
+      </header>
+      <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1.6fr)]">
+        <div className="rounded-xl border bg-card/80 p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Create tag
+          </h2>
+          <CreatePostTagForm />
+        </div>
+        <div className="rounded-xl border bg-card/80 p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Existing tags
+          </h2>
+          <TagNames />
+        </div>
+      </div>
     </div>
   );
 }

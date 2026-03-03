@@ -32,12 +32,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.variable}`}>
+    <html lang="en" suppressHydrationWarning className={geist.variable}>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
       </head>
-      <body className="dark:bg-[#1a1a1a] antialiased max-w-3xl mx-1 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-4 md:px-6 lg:px-8">
+      <body className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
+        <main className="flex-auto min-w-0 mt-8 flex flex-col px-4 md:px-8 lg:px-10 max-w-5xl mx-auto">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -49,10 +49,10 @@ export default function RootLayout({
               {children}
             </SessionProvider>
           </ThemeProvider>
+          <footer className="mt-12 border-t border-border/60 pt-6 pb-8 text-center text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Byte Blog — All rights reserved.
+          </footer>
         </main>
-        <footer className="text-sm text-gray-500 mt-8 mb-4 text-center">
-          © {new Date().getFullYear()} Byte Blog — All rights reserved.
-        </footer>
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -59,12 +58,20 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger className="flex items-center gap-2">
-            {session?.user?.image && (
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={`${session?.user?.image}`} />
-              </Avatar>
-            )}
-            <span className="text-sm">{session.user.name}</span>
+            <Avatar className="h-8 w-8 border border-border/70 shadow-sm">
+              {session.user.image ? (
+                <AvatarImage
+                  src={session.user.image}
+                  alt={session.user.name ?? "Profile"}
+                  className="object-cover"
+                />
+              ) : (
+                <AvatarFallback className="text-xs font-medium">
+                  {session.user.name?.[0]?.toUpperCase() ?? "U"}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <span className="text-sm font-medium">{session.user.name}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
@@ -87,27 +94,30 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b">
-      <h1 className="text-2xl font-bold">
-        <Link href="/">Byte Blogger</Link>
-      </h1>
-      <nav className="flex items-center gap-2">
-        {status === "loading" ? (
-          <Skeleton />
-        ) : (
-          <>
-            {session?.user?.role === "admin" && (
-              <Button asChild variant={"outline"}>
-                <Link href="/admin">Admin</Link>
-              </Button>
-            )}
+    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 md:px-8">
+        <h1 className="text-xl font-semibold tracking-tight md:text-2xl">
+          <Link href="/" className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+            Byte Blogger
+          </Link>
+        </h1>
+        <nav className="flex items-center gap-2">
+          {status === "loading" ? (
+            <Skeleton className="h-8 w-20" />
+          ) : (
+            <>
+              {session?.user?.role === "admin" && (
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/admin">Admin</Link>
+                </Button>
+              )}
 
-            <ModeToggle />
-            <LogOutMenu />
-            {/* <LogIn /> */}
-          </>
-        )}
-      </nav>
+              <ModeToggle />
+              <LogOutMenu />
+            </>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }

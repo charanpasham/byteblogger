@@ -9,11 +9,28 @@ export async function RenderTags() {
     tagId: posttagmapping.tagId,
     tagName: posttags.name,
     tagSlug: posttags.tagSlug
-  }).from(posttagmapping)
+  })
+    .from(posttagmapping)
     .leftJoin(posttags, eq(posttagmapping.tagId, posttags.id));
-    return postTags.map(pt => (
-        <Link href={`/posts/tags/${pt.tagSlug}`} key={pt.tagId} >
-          <Badge>{pt.tagName}</Badge>
-        </Link>
-    ));
+
+  if (!postTags.length) {
+    return null;
+  }
+
+  return (
+    <div className="w-full rounded-xl border bg-card/60 p-4 text-left shadow-sm">
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        Browse by tag
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {postTags.map((pt) => (
+          <Link href={`/posts/tags/${pt.tagSlug}`} key={pt.tagId}>
+            <Badge variant="secondary" className="cursor-pointer">
+              {pt.tagName}
+            </Badge>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 }

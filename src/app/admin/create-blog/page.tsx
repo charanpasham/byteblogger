@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 import { MoveLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -67,65 +66,76 @@ export default function CreateBlogPage() {
   }
 
   return (
-    <>
-    <Link href="/admin" aria-label="Back">
-      <MoveLeft size={20} className="mb-5" />
-    </Link>
-      <Card className="p-5">
-      <CardContent>
-        <CardDescription className="my-5 text-xl font-bold">
-          Create a new blog post
-        </CardDescription>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="title ..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="description ..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Slug</FormLabel>
-                  <FormControl>
-                    <Input placeholder="slug ..." {...field} />
-                  </FormControl>
-                  <FormDescription>Slug should be unique</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="my-4">
-              Submit
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
-    </>
-
+    <div className="mx-auto max-w-3xl space-y-6">
+      <button
+        type="button"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+        onClick={() => router.push("/admin")}
+        aria-label="Back to admin"
+      >
+        <MoveLeft size={18} />
+        <span>Back to dashboard</span>
+      </button>
+      <Card className="border border-border/60 bg-card/80 shadow-sm">
+        <CardContent className="pt-6">
+          <CardDescription className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            New post
+          </CardDescription>
+          <h1 className="mb-2 text-xl font-semibold tracking-tight">
+            Create a new blog post
+          </h1>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Add a title, optional description, and a unique slug. You can write the full content after creating the post.
+          </p>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My next big idea..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Optional short summary for the list view" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input placeholder="my-next-big-idea" {...field} />
+                    </FormControl>
+                    <FormDescription>Slug should be unique</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="mt-2 w-full md:w-auto">
+                Create post
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

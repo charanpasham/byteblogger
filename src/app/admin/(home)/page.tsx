@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { posts, users } from "@/server/db/schema";
@@ -22,70 +22,139 @@ export default async function Admin() {
     .from(posts)
     .where(eq(posts.userId, session.user.id))
     .orderBy(posts.createdAt);
-  // protect the admin page
   return (
-    <main>
-      <div className="container flex flex-col items-center justify-center gap-5 px-4 py-16">
-        <div className="flex flex-col">
-            <span>Number of Users: {userList.length}</span>
-            <span>Total Blog Posts: {blogPosts.length}</span>
-        </div>
+    <div className="space-y-8">
+      <div className="flex items-baseline justify-between gap-2">
         <div>
-          <div className="flex items-center justify-between my-5">
-            <h1 className="mb-4 text-2xl font-bold">Edit your blogs</h1>
-            <Link href="/admin/create-blog">
-              <Button variant="secondary" className="cursor-pointer">
-                Create New Blog
-              </Button>
-            </Link>
-          </div>
-
-            <div className="flex gap-3 flex-col">
-              {blogs.map((blog) => (
-                  <Card key={blog.id}>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                      <Link
-                          href={`/admin/edit/${blog.slug}`}
-                          className="text-slate-500 hover:underline"
-                          key={blog.id}
-                        >
-                        <CardTitle> {blog.title}</CardTitle>
-                        <CardDescription className="flex flex-col gap-2 my-3">
-                              <div className="text-lg">{blog.description}</div>
-                              <div className="text-sm text-gray-500">Last edited: {blog.updatedAt?.toLocaleString()}</div>
-                        </CardDescription>
-                      </Link>
-                      <div className="flex items-center gap-4">
-                        <form action={TogglePublishPostAction}>
-                          <button type="submit" className="cursor-pointer">
-                            {blog.isPublished ? (
-                                <EyeIcon className="h-6 w-6 text-green-500" />
-                            ) : (
-                                <EyeOff className="h-6 w-6 text-gray-400" />
-                            )}
-
-                          </button>
-                          <input type="hidden" name="postId" value={blog.id} />
-                        </form>
-                    <form action={TogglePinPostAction}>
-                        <input type="hidden" name="postId" value={blog.id} />
-                        <button type="submit" aria-label="Toggle Pin">
-                          {blog.isPinned ? (
-                            <PinOff className="h-6 w-6 text-blue-500" />
-                          ) : (
-                            <PinIcon className="h-6 w-6 text-gray-400" />
-                          )}
-                        </button>
-                      </form>
-                        <DeletePost  postId={blog.id} />
-                      </div>
-
-                    </CardHeader>
-                  </Card>
-              ))}
-            </div>
+          <h1 className="text-2xl font-semibold tracking-tight">Admin dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage your posts, tags, and profile.
+          </p>
         </div>
+        <Link href="/admin/create-blog">
+          <Button variant="default" size="sm" className="cursor-pointer">
+            Create new post
+          </Button>
+        </Link>
       </div>
-    </main>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="border border-border/60 bg-card/80 shadow-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total users
+            </CardTitle>
+            <p className="text-2xl font-semibold">{userList.length}</p>
+          </CardHeader>
+        </Card>
+        <Card className="border border-border/60 bg-card/80 shadow-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total posts
+            </CardTitle>
+            <p className="text-2xl font-semibold">{blogPosts.length}</p>
+          </CardHeader>
+        </Card>
+        <Card className="border border-border/60 bg-card/80 shadow-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Your posts
+            </CardTitle>
+            <p className="text-2xl font-semibold">{blogs.length}</p>
+          </CardHeader>
+        </Card>
+      </div>
+
+      <section className="space-y-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Your posts
+          </h2>
+          {blogs.length > 0 && (
+            <span className="text-xs text-muted-foreground">
+              {blogs.length} {blogs.length === 1 ? "entry" : "entries"}
+            </span>
+          )}
+        </div>
+        {blogs.length === 0 ? (
+          <Card className="border-dashed bg-card/60">
+            <CardContent className="py-6 text-sm text-muted-foreground">
+              You haven&apos;t created any posts yet. Click{" "}
+              <span className="font-medium text-foreground">Create new post</span> to get started.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {blogs.map((blog) => (
+              <Card
+                key={blog.id}
+                className="border border-border/60 bg-card/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 p-4">
+                  <Link
+                    href={`/admin/edit/${blog.slug}`}
+                    className="flex-1 text-left"
+                    key={blog.id}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-base font-semibold">
+                        {blog.title || "Untitled post"}
+                      </CardTitle>
+                      <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700 dark:bg-slate-900/60 dark:text-slate-200">
+                        {blog.isPublished ? "Published" : "Draft"}
+                      </span>
+                      {blog.isPinned && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
+                          <PinIcon className="h-3 w-3" />
+                          Pinned
+                        </span>
+                      )}
+                    </div>
+                    <CardDescription className="mt-1 line-clamp-2 text-sm">
+                      {blog.description || "No description yet."}
+                    </CardDescription>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Last edited:{" "}
+                      {blog.updatedAt ? blog.updatedAt.toLocaleString() : "N/A"}
+                    </p>
+                  </Link>
+                  <div className="flex items-center gap-3">
+                    <form action={TogglePublishPostAction}>
+                      <input type="hidden" name="postId" value={blog.id} />
+                      <button
+                        type="submit"
+                        className="cursor-pointer rounded-full border border-border/70 bg-background/60 p-1.5 hover:bg-background"
+                        aria-label={blog.isPublished ? "Unpublish" : "Publish"}
+                      >
+                        {blog.isPublished ? (
+                          <EyeIcon className="h-4 w-4 text-emerald-500" />
+                        ) : (
+                          <EyeOff className="h-4 w-4 text-gray-400" />
+                        )}
+                      </button>
+                    </form>
+                    <form action={TogglePinPostAction}>
+                      <input type="hidden" name="postId" value={blog.id} />
+                      <button
+                        type="submit"
+                        aria-label="Toggle pin"
+                        className="cursor-pointer rounded-full border border-border/70 bg-background/60 p-1.5 hover:bg-background"
+                      >
+                        {blog.isPinned ? (
+                          <PinOff className="h-4 w-4 text-sky-500" />
+                        ) : (
+                          <PinIcon className="h-4 w-4 text-gray-400" />
+                        )}
+                      </button>
+                    </form>
+                    <DeletePost postId={blog.id} />
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
   );
 }

@@ -69,22 +69,30 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
 
   const PostViews = () => (
     <div className="flex gap-1">
-        <ViewIcon className="text-gray-700 dark:text-gray-300 h-5 w-5 self-center" />
-        <span className="text-sm dark:text-gray-300 self-center">{viewCount} {viewCount === 1 ? "View" : "Views"}</span>
+      <ViewIcon className="h-5 w-5 self-center text-gray-700 dark:text-gray-300" />
+      <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+        {viewCount} {viewCount === 1 ? "View" : "Views"}
+      </span>
     </div>
-
-  )
+  );
   return (
-    <>
-      <h2 className="pt-4 text-base italic font-thin">- {author}</h2>
-      <div className="flex mt-2 gap-5">
-        <LikeButton />
-        <PostViews />
+    <div className="rounded-2xl border bg-card/80 px-4 pb-8 pt-6 shadow-sm sm:px-6 md:px-8">
+      <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-3">
+        <p className="text-sm text-muted-foreground">
+          Written by{" "}
+          <span className="font-medium text-foreground">
+            {author || "Unknown author"}
+          </span>
+        </p>
+        <div className="flex gap-4">
+          <LikeButton />
+          <PostViews />
+        </div>
       </div>
       <article
-        className={`tiptap proseMirror mt-5 mb-10 min-h-full !text-md md:!text-lg`}
+        className="tiptap proseMirror mt-6 mb-4 min-h-full !text-[0.95rem] leading-relaxed md:!text-[1.02rem]"
         dangerouslySetInnerHTML={{ __html: content || "" }}
       />
-    </>
+    </div>
   );
 }

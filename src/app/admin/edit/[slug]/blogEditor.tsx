@@ -6,6 +6,11 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ToggleTagAction } from "./toggleTagAction";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { toast } from "sonner";
 
 export function BlogEditor({
   id,
@@ -27,8 +32,10 @@ export function BlogEditor({
   allTags?: { id: number; name: string }[];
 }) {
   const user = useSession();
-  const [ newTitle, setnewTitle ] = useState(title);
-  const [ newDescription, setnewDescription ] = useState(description);
+  const [newTitle, setNewTitle] = useState(title);
+  const [newDescription, setNewDescription] = useState(description);
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [isSavingDescription, setIsSavingDescription] = useState(false);
   const handleSubmit = async (content: string) => {
     await UpdateBlogAction(
       content.replace("language-typescriptreact", "typescript"),
@@ -39,62 +46,126 @@ export function BlogEditor({
   };
 
   const handleToggleTag = async (tagId: number, isChecked: boolean) => {
-    // Call the server action to toggle the tag
-    // You need to implement ToggleTagAction in a similar way to ToggleLikeAction
     await ToggleTagAction(id, tagId, slug, isChecked);
-  }
+    toast.success(`Tag ${isChecked ? "added" : "removed"}`);
+  };
 
   const RenderTagCheckboxes = () => {
-    return allTags?.map((tag) => {
-      const isChecked = assignedTags?.some((assignedTag) => assignedTag.id === tag.id);
+    if (!allTags?.length) {
       return (
-        <div key={tag.id} className="flex items-center gap-2 mb-2">
-          <Input
-            type="checkbox"
-            id={`tag-${tag.id}`}
-            name="tags"
-            value={tag.id}
-            defaultChecked={isChecked}
-            className="h-4 w-4"
-            onChange={async (e) => {
-              await handleToggleTag(tag.id, e.target.checked);
-            }}
-          />
-          <label htmlFor={`tag-${tag.id}`} className="text-sm">
-            {tag.name}
-          </label>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          You haven&apos;t created any tags yet.
+        </p>
       );
-    });
-  }
+    }
+
+    return (
+      <div className="grid gap-2 sm:grid-cols-2">
+        {allTags.map((tag) => {
+          const isChecked = assignedTags?.some(
+            (assignedTag) => assignedTag.id === tag.id,
+          );
+
+          return (
+            <label
+              key={tag.id}
+              htmlFor={`tag-${tag.id}`}
+              className="flex items-center gap-2 text-sm"
+            >
+              <Checkbox
+                id={`tag-${tag.id}`}
+                checked={isChecked}
+                onCheckedChange={async (checked) => {
+                  await handleToggleTag(tag.id, Boolean(checked));
+                }}
+              />
+              <span>{tag.name}</span>
+            </label>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
-    <>
-    <div className="flex justify-center flex-col mx-auto max-w-lg">
-      <div className="flex space-between">
-          <Input type="text" className="border-0 bg-transparent font-bold outline-none focus:ring-0 w-full" placeholder="Blog Heading ..." value={newTitle} onChange={async (e) => {
-            setnewTitle(e.target.value);
-            await UpdateTitle(e.target.value, slug);
-          }} />
-      </div>
-        <div className="flex space-between ">
-          <Input className="border-0 bg-transparent pb-2 outline-none focus:ring-0 w-full" placeholder="Blog Subheading ..." value={newDescription} onChange={async (e) => {
-              setnewDescription(e.target.value);
-              await UpdateDescription(e.target.value, slug);
-          }} />
-        </div>
-        <div>
-          <div className="flex gap-1">
-           <RenderTagCheckboxes />
+    <div className="space-y-6">
+      <Card className="mx-auto max-w-3xl border border-border/60 bg-card/80 shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-lg font-semibold tracking-tight">
+            Edit post
+          </CardTitle>
+          <CardDescription className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <Badge variant="secondary" className="text-[11px]">
+              {isPublished ? "Published" : "Draft"}
+            </Badge>
+            <span className="break-all text-[11px] opacity-80">
+              /posts/{slug}
+            </span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              type="text"
+              className="w-full"
+              placeholder="Blog heading..."
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onBlur={async () => {
+                try {
+                  setIsSavingTitle(true);
+                  await UpdateTitle(newTitle, slug);
+                  toast.success("Title updated");
+                } finally {
+                  setIsSavingTitle(false);
+                }
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              This appears as the main heading for your post.
+              {isSavingTitle && " Saving..."}
+            </p>
           </div>
 
-        </div>
-    </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              className="w-full"
+              placeholder="Short summary shown in lists..."
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              onBlur={async () => {
+                try {
+                  setIsSavingDescription(true);
+                  await UpdateDescription(newDescription, slug);
+                  toast.success("Description updated");
+                } finally {
+                  setIsSavingDescription(false);
+                }
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              Keep it concise. It&apos;s shown on the homepage and admin list.
+              {isSavingDescription && " Saving..."}
+            </p>
+          </div>
 
-      <RichTextEditor
-        content={content}
-        onSubmit={handleSubmit}
-      />
-    </>
+          <div className="space-y-2">
+            <Label>Tags</Label>
+            <p className="text-xs text-muted-foreground">
+              Use tags to group related posts. Changes are saved immediately.
+            </p>
+            <RenderTagCheckboxes />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="mx-auto max-w-3xl">
+        <RichTextEditor content={content} onSubmit={handleSubmit} />
+      </div>
+    </div>
   );
 }

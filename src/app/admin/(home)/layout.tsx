@@ -41,11 +41,11 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.variable} `}>
+    <html lang="en" suppressHydrationWarning className={geist.variable}>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
       </head>
-      <body>
+      <body className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -56,16 +56,17 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarTrigger />
-              {/* Main content area */}
-              <main className="mx-auto py-5 md:w-auto md:min-w-[820px] lg:px-12">
+              <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-12 pt-8 md:px-8">
                 {session.user.role !== "admin" ? (
-                  <Alert
-                    variant={"destructive"}
-                    className="mx-auto mt-10 w-full max-w-md"
-                  >
-                    <h2 className="text-lg font-bold">Access Denied</h2>
-                    <p>You do not have permission to access this page.</p>
-                  </Alert>
+                  <div className="flex flex-1 items-center justify-center">
+                    <Alert
+                      variant={"destructive"}
+                      className="mx-auto w-full max-w-md"
+                    >
+                      <h2 className="text-lg font-bold">Access Denied</h2>
+                      <p>You do not have permission to access this page.</p>
+                    </Alert>
+                  </div>
                 ) : (
                   children
                 )}
