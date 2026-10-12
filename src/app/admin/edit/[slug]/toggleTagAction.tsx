@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import { posttagmapping } from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/authGuard";
 
 
 export async function ToggleTagAction(
@@ -12,6 +13,7 @@ export async function ToggleTagAction(
     slug: string,
     shouldAssign: boolean,
 ): Promise<void> {
+    await requireAdmin();
     const existingMapping = await db
         .select()
         .from(posttagmapping)

@@ -40,10 +40,10 @@ export function PostGrid( { posts, heading}: { posts: PostProps[], heading: stri
                     >
                       <Card className="border border-border/60 bg-card/80 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <CardHeader className="space-y-2">
-                          <CardTitle className="flex items-start justify-between gap-2 text-lg font-semibold">
+                          <CardTitle className="flex items-start justify-between gap-2 font-serif text-xl font-bold leading-snug tracking-tight">
                             <span className="line-clamp-2">{post.title}</span>
                             {post.isPinned && (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
+                              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-sky-50 font-sans px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:bg-sky-900/40 dark:text-sky-200">
                                 <PinIcon className="h-3 w-3" />
                                 Pinned
                               </span>
@@ -59,7 +59,7 @@ export function PostGrid( { posts, heading}: { posts: PostProps[], heading: stri
                           </p>
                           <p>
                             {post.createdAt
-                              ? new Date(post.createdAt).toLocaleDateString()
+                              ? new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                               : "Unknown date"}
                           </p>
                         </CardFooter>

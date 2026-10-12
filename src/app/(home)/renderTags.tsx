@@ -1,17 +1,27 @@
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/server/db";
-import { posttagmapping, posttags } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { posts, posttagmapping, posttags } from "@/server/db/schema";
+import { and, asc, count, eq } from "drizzle-orm";
 import Link from "next/link";
 
 export async function RenderTags() {
-  const postTags = await db.select({
-    tagId: posttagmapping.tagId,
-    tagName: posttags.name,
-    tagSlug: posttags.tagSlug
-  })
-    .from(posttagmapping)
-    .leftJoin(posttags, eq(posttagmapping.tagId, posttags.id));
+  // One row per tag (not per post-tag mapping), counting only published posts
+  // so every listed tag leads to a non-empty tag page.
+  const postTags = await db
+    .select({
+      tagId: posttags.id,
+      tagName: posttags.name,
+      tagSlug: posttags.tagSlug,
+      postCount: count(posts.id),
+    })
+    .from(posttags)
+    .innerJoin(posttagmapping, eq(posttagmapping.tagId, posttags.id))
+    .innerJoin(
+      posts,
+      and(eq(posts.id, posttagmapping.postId), eq(posts.isPublished, true)),
+    )
+    .groupBy(posttags.id, posttags.name, posttags.tagSlug)
+    .orderBy(asc(posttags.name));
 
   if (!postTags.length) {
     return null;
@@ -25,8 +35,9 @@ export async function RenderTags() {
       <div className="flex flex-wrap gap-2">
         {postTags.map((pt) => (
           <Link href={`/posts/tags/${pt.tagSlug}`} key={pt.tagId}>
-            <Badge variant="secondary" className="cursor-pointer">
+            <Badge variant="secondary" className="cursor-pointer gap-1.5">
               {pt.tagName}
+              <span className="text-muted-foreground">{pt.postCount}</span>
             </Badge>
           </Link>
         ))}

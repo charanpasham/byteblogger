@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { fontVariables } from "@/lib/fonts";
 import { SessionProvider } from "next-auth/react";
 import Header from "../header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -29,19 +29,11 @@ export const viewport = {
   viewportFit: "cover",
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={geist.variable}>
-      <head>
-        <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
-      </head>
+    <html lang="en" suppressHydrationWarning className={fontVariables}>
       <body className="min-h-screen overflow-x-clip bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
         <main className="mx-auto min-w-0 max-w-5xl flex flex-auto flex-col overflow-x-clip px-2 pt-8 sm:px-4 md:px-8 lg:px-10">
           <ThemeProvider

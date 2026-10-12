@@ -9,3 +9,12 @@ export async function requireAuth() {
   }
   return session;
 }
+
+// For server actions: throws instead of redirecting so callers can surface the error.
+export async function requireAdmin() {
+  const session = await auth();
+  if (session?.user?.role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+  return session;
+}

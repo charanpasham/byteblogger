@@ -21,6 +21,16 @@ import { useRouter } from "next/navigation";
 import { MoveLeft } from "lucide-react";
 import Link from "next/link";
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 export default function CreateBlogPage() {
   const user = useSession();
   const router = useRouter();
@@ -96,7 +106,18 @@ export default function CreateBlogPage() {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="My next big idea..." {...field} />
+                      <Input
+                        placeholder="My next big idea..."
+                        autoFocus
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // Keep the slug in sync until it's edited by hand.
+                          if (!form.getFieldState("slug").isDirty) {
+                            form.setValue("slug", slugify(e.target.value));
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -124,13 +145,19 @@ export default function CreateBlogPage() {
                     <FormControl>
                       <Input placeholder="my-next-big-idea" {...field} />
                     </FormControl>
-                    <FormDescription>Slug should be unique</FormDescription>
+                    <FormDescription>
+                      Generated from the title. Your post will live at /posts/{field.value || "…"}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="mt-2 w-full md:w-auto">
-                Create post
+              <Button
+                type="submit"
+                className="mt-2 w-full md:w-auto"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? "Creating…" : "Create post & start writing"}
               </Button>
             </form>
           </Form>

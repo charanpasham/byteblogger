@@ -1,245 +1,121 @@
 "use client";
-import "highlight.js/styles/atom-one-dark.css";
-import {EditorProvider } from "@tiptap/react";
-import Blockquote from "@tiptap/extension-blockquote";
-import Text from "@tiptap/extension-text";
-import BulletList from "@tiptap/extension-bullet-list";
-import Paragraph from "@tiptap/extension-paragraph";
-import Document from "@tiptap/extension-document";
-import Bold from "@tiptap/extension-bold";
-import Heading from "@tiptap/extension-heading";
+import { EditorContent, Extension, useEditor, type Editor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import ListItem from "@tiptap/extension-list-item";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
-import Italic from "@tiptap/extension-italic";
-import Dropcursor from "@tiptap/extension-dropcursor";
-import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
-import Gapcursor from "@tiptap/extension-gapcursor";
-import Link from "@tiptap/extension-link";
-import History from "@tiptap/extension-history";
+import Highlight from "@tiptap/extension-highlight";
 import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
 import FileHandler from "@tiptap/extension-file-handler";
+import Typography from "@tiptap/extension-typography";
+import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { Markdown } from "@tiptap/markdown";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
-import { EditorMenu } from "./editorMenu";
-import { EditorUploadAction } from "./editorUploadAction";
-import Highlight from "@tiptap/extension-highlight";
-import { TextStyle, LineHeight, FontFamily } from '@tiptap/extension-text-style'
-import Typography from '@tiptap/extension-typography'
-import { useEffect, useState } from "react";
-import { toast } from "sonner"; 
-import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { SlashCommand } from "./slashCommand";
+import { IMAGE_MIME_TYPES, uploadImageIntoEditor } from "./editorImageUpload";
+import { promptForLink } from "./editorMenu";
+import { EditorBubbleMenu, OPEN_LINK_EDITOR_EVENT } from "./editorBubbleMenu";
 
-interface RichTextEditorProps {
-  content: string;
-  onSubmit: (html: string) => void;
-}
+const lowlight = createLowlight(all);
 
-export const RichTextEditor = ({
-  content,
-  onSubmit,
-}: RichTextEditorProps) => {
-  // create a lowlight instance with all languages loaded
-  const lowlight = createLowlight(all);
-  const extensions = [
-    Blockquote,
-    BulletList,
-    Document,
-    Paragraph,
-    Bold,
-    Highlight.configure({
-      multicolor: true,
-    }),
-    TextStyle,
-    LineHeight,
-    FontFamily,
-    Markdown,
-    Text,
-    Typography,
-    CodeBlockLowlight.configure({
-      lowlight,
-      defaultLanguage: "javascript",
-    }),
-    Emoji.configure({
-      emojis: gitHubEmojis,
-      enableEmoticons: true,
-    }),
-    ListItem,
-    Image,
-    Italic,
-    Dropcursor,
-    Heading.configure({
-      levels: [1, 2, 3],
-    }),
-    Placeholder.configure({
-      placeholder: "Write something ...",
-      emptyEditorClass: 'is-editor-empty',
-    }),
-    TextAlign.configure({
-      types: ["heading", "paragraph", "blockquote"],
-    }),
-    Gapcursor,
-    History,
-    Youtube.configure({
-      controls: false,
-      nocookie: true,
-    }),
-    FileHandler.configure({
-      allowedMimeTypes: [
-        "image/png",
-        "image/jpeg",
-        "image/gif",
-        "image/webp",
-        "image/jpg",
-      ],
-      onDrop: async (currentEditor, files, pos) => {
-        const file = files[0] || null;
-        const utData = await EditorUploadAction(file);
-        if (!utData) {
-          return;
+// Mod-K opens the inline link field when text is selected, otherwise a prompt.
+const LinkShortcut = Extension.create({
+  name: "linkShortcut",
+  addKeyboardShortcuts() {
+    return {
+      "Mod-k": () => {
+        if (this.editor.state.selection.empty) {
+          promptForLink(this.editor);
+        } else {
+          this.editor.view.dom.dispatchEvent(new CustomEvent(OPEN_LINK_EDITOR_EVENT));
         }
-        const url = utData.ufsUrl;
-        console.log(url);
-        currentEditor?.chain().focus().setImage({ src: url }).run();
+        return true;
       },
-    }),
-    Link.configure({
+    };
+  },
+});
+
+const extensions = [
+  StarterKit.configure({
+    codeBlock: false, // replaced by CodeBlockLowlight
+    heading: { levels: [1, 2, 3] },
+    dropcursor: { color: "var(--ring)", width: 3 },
+    link: {
       openOnClick: false,
       autolink: true,
       defaultProtocol: "https",
       protocols: ["http", "https"],
-      isAllowedUri: (url, ctx) => {
-        try {
-          // construct URL
-          const parsedUrl = url.includes(":")
-            ? new URL(url)
-            : new URL(`${ctx.defaultProtocol}://${url}`);
-
-          // use default validation
-          if (!ctx.defaultValidate(parsedUrl.href)) {
-            return false;
-          }
-
-          // disallowed protocols
-          const disallowedProtocols = ["ftp", "file", "mailto"];
-          const protocol = parsedUrl.protocol.replace(":", "");
-
-          if (disallowedProtocols.includes(protocol)) {
-            return false;
-          }
-
-          // only allow protocols specified in ctx.protocols
-          const allowedProtocols = ctx.protocols.map((p) =>
-            typeof p === "string" ? p : p.scheme,
-          );
-
-          if (!allowedProtocols.includes(protocol)) {
-            return false;
-          }
-
-          // disallowed domains
-          const disallowedDomains = [
-            "example-phishing.com",
-            "malicious-site.net",
-          ];
-          const domain = parsedUrl.hostname;
-
-          if (disallowedDomains.includes(domain)) {
-            return false;
-          }
-
-          // all checks have passed
-          return true;
-        } catch {
-          return false;
-        }
-      },
-      shouldAutoLink: (url) => {
-        try {
-          // construct URL
-          const parsedUrl = url.includes(":")
-            ? new URL(url)
-            : new URL(`https://${url}`);
-
-          // only auto-link if the domain is not in the disallowed list
-          const disallowedDomains = [
-            "example-no-autolink.com",
-            "another-no-autolink.com",
-          ];
-          const domain = parsedUrl.hostname;
-
-          return !disallowedDomains.includes(domain);
-        } catch {
-          return false;
-        }
-      },
-    }),
-  ];
-  const editorProps = {
-    attributes: {
-      class:
-        "prose prose-sm sm:prose-base lg:prose-lg mb-2 max-w-3xl mx-auto focus:outline-none p-4 rounded-xl border border-border/60 bg-background/80 dark:bg-slate-900/60 min-h-[70vh]",
     },
-  };
+  }),
+  CodeBlockLowlight.configure({ lowlight, defaultLanguage: "javascript" }),
+  Highlight.configure({ multicolor: true }),
+  // No TextStyle/FontFamily: inline fonts from pasted content are dropped so
+  // every post uses the site's reading typography.
+  Markdown,
+  Typography,
+  Emoji.configure({ emojis: gitHubEmojis, enableEmoticons: true }),
+  Image,
+  Youtube.configure({ controls: false, nocookie: true }),
+  TextAlign.configure({ types: ["heading", "paragraph", "blockquote"] }),
+  CharacterCount,
+  Placeholder.configure({
+    includeChildren: true,
+    placeholder: ({ node }) => {
+      if (node.type.name === "heading") return `Heading ${node.attrs.level as number}`;
+      if (node.type.name === "codeBlock") return "";
+      return "Write something, or press “/” for blocks…";
+    },
+  }),
+  FileHandler.configure({
+    allowedMimeTypes: IMAGE_MIME_TYPES,
+    onDrop: (editor, files, pos) => {
+      for (const file of files) void uploadImageIntoEditor(editor, file, pos);
+    },
+    onPaste: (editor, files, htmlContent) => {
+      // Pasted HTML that already references the image is handled by the editor.
+      if (htmlContent) return;
+      for (const file of files) void uploadImageIntoEditor(editor, file);
+    },
+  }),
+  SlashCommand,
+  LinkShortcut,
+];
 
-  const [blogHtml, setBlogHtml] = useState(content);
+export function useBlogEditor({
+  content,
+  onCreate,
+  onUpdate,
+}: {
+  content: string;
+  onCreate: (editor: Editor) => void;
+  onUpdate: (editor: Editor) => void;
+}) {
+  return useEditor({
+    extensions,
+    content,
+    immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        class: "editor-canvas focus:outline-none",
+        spellcheck: "true",
+      },
+    },
+    onCreate: ({ editor }) => onCreate(editor),
+    onUpdate: ({ editor }) => onUpdate(editor),
+  });
+}
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        onSubmit(blogHtml);
-        toast.success("Blog content saved!");
-      }
-    }
-    window.addEventListener("keydown", handler);
-    return () => {
-      window.removeEventListener("keydown", handler);
-    };
-  }, [blogHtml, onSubmit]);
-
-
-  const SubmitButton = () => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          className="mx-auto flex items-center justify-center"
-          size="sm"
-          onClick={() => {
-            onSubmit(blogHtml);
-            toast.success("Blog content saved!");
-          }}
-        >
-          Save content
-        </Button>
-      </TooltipTrigger>
-
-      <TooltipContent>
-        Keyboard shortcut: (Cmd/Ctrl + S)
-      </TooltipContent>
-    </Tooltip>
-  );
-
+export function EditorCanvas({ editor }: { editor: Editor }) {
   return (
-    <article className="mt-6 rounded md:mx-0 md:p-0">
-      <EditorProvider
-        extensions={extensions}
-        content={content}
-        editorProps={editorProps}
-        slotBefore={<EditorMenu />}
-        immediatelyRender = {false}
-        onUpdate={({ editor }) => {
-          setBlogHtml(editor.getHTML());
-        }}
-        slotAfter={<SubmitButton />}
-
-      >
-
-      </EditorProvider>
-    </article>
+    <>
+      <EditorContent editor={editor} />
+      <EditorBubbleMenu editor={editor} />
+    </>
   );
-};
+}
+
+export function getWordCount(editor: Editor) {
+  return editor.storage.characterCount.words();
+}

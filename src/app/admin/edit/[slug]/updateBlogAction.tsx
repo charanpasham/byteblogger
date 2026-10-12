@@ -1,52 +1,75 @@
 "use server";
 import { db } from "@/server/db";
 import { posts } from "@/server/db/schema";
+import { requireAdmin } from "@/lib/authGuard";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export interface BlogUpdateResponse {
-  id: string | null;
-  isUpdated: boolean;
+export interface PostDraft {
+  title: string;
+  description: string;
+  content: string;
 }
 
-export async function UpdateBlogAction(
-  content: string,
-  slug: string,
-  userId: string,
-  isPublished: boolean,
-): Promise<BlogUpdateResponse> {
-  const blogs = await db
-    .select()
-    .from(posts)
-    .where(and(eq(posts.slug, slug), eq(posts.userId, userId)));
+export interface SavePostResponse {
+  isUpdated: boolean;
+  updatedAt: string | null;
+}
 
-  if (blogs.length === 0) {
-    return {
-      isUpdated: false,
-    } as BlogUpdateResponse;
-  }
+export async function SavePostAction(
+  slug: string,
+  draft: PostDraft,
+): Promise<SavePostResponse> {
+  const session = await requireAdmin();
 
   const updatedPost = await db
     .update(posts)
     .set({
-      content,
-      isPublished,
+      title: draft.title,
+      description: draft.description,
+      content: draft.content.replaceAll("language-typescriptreact", "typescript"),
     })
-    .where(eq(posts.slug, slug))
-    .returning({ id: posts.id });
-  revalidatePath(`/admin/edit/${slug}`);
+    .where(and(eq(posts.slug, slug), eq(posts.userId, session.user.id)))
+    .returning({ updatedAt: posts.updatedAt });
+
+  if (updatedPost.length === 0) {
+    return { isUpdated: false, updatedAt: null };
+  }
+
+  revalidatePath(`/posts/${slug}`);
   return {
-    id: updatedPost[0]?.id.toString(),
     isUpdated: true,
-  } as BlogUpdateResponse;
+    updatedAt: updatedPost[0]?.updatedAt?.toISOString() ?? null,
+  };
 }
 
-export async function UpdateTitle(title: string, slug: string): Promise<void> {
-  await db.update(posts).set({ title }).where(eq(posts.slug, slug));
-  revalidatePath(`/admin/edit/${slug}`);
-}
+export async function SetPublishedAction(
+  slug: string,
+  isPublished: boolean,
+): Promise<boolean> {
+  const session = await requireAdmin();
+  const where = and(eq(posts.slug, slug), eq(posts.userId, session.user.id));
 
-export async function UpdateDescription(description: string, slug: string): Promise<void> {
-  await db.update(posts).set({ description }).where(eq(posts.slug, slug));
-  revalidatePath(`/admin/edit/${slug}`);
+  const [post] = await db
+    .select({ publishedAt: posts.publishedAt })
+    .from(posts)
+    .where(where)
+    .limit(1);
+  if (!post) {
+    return false;
+  }
+
+  await db
+    .update(posts)
+    .set({
+      isPublished,
+      // Keep the original publish date when re-publishing.
+      publishedAt: isPublished ? (post.publishedAt ?? new Date()) : post.publishedAt,
+    })
+    .where(where);
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath(`/posts/${slug}`);
+  return true;
 }

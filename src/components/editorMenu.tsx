@@ -4,242 +4,158 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Code,
   Code2,
+  Heading1,
+  Heading2,
+  Heading3,
   Highlighter,
-  Image,
+  ImagePlus,
   Italic,
   Link2,
   List,
+  ListOrdered,
+  Minus,
   Quote,
   Redo2,
+  Strikethrough,
+  Underline,
   Undo2,
-  Video
+  Youtube,
+  type LucideIcon,
 } from "lucide-react";
-import { Button } from "./ui/button";
-import { useCurrentEditor } from "@tiptap/react";
-import { useCallback } from "react";
+import { useEditorState, type Editor } from "@tiptap/react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { cn } from "@/lib/utils";
+import { pickImageIntoEditor } from "./editorImageUpload";
 
-export const EditorMenu = () => {
-  const { editor } = useCurrentEditor();
-  if (!editor) {
-    return null;
-  }
+const isMac =
+  typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+export const modKey = isMac ? "⌘" : "Ctrl";
 
-  const addImage = useCallback(() => {
-    const url = window.prompt("URL");
-
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor]);
-
-  const addYoutubeVideo = () => {
-    const url = window.prompt("YouTube Video URL");
-
-    if (url) {
-      editor?.commands.setYoutubeVideo({
-        src: url,
-        width: 520,
-        height: 480,
-      });
-    }
-  };
-
-  const setLink = () => {
-    const previousUrl = editor?.getAttributes("link").href || "";
-    const url = window.prompt("URL", previousUrl);
-    if (url === null) {
-      return;
-    }
-
-    if (url === "") {
-      editor?.chain().focus().extendMarkRange("link").unsetLink().run();
-
-      return;
-    }
-
-    try {
-      editor
-        ?.chain()
-        .focus()
-        .extendMarkRange("link")
-        .setLink({ href: url })
-        .run();
-    } catch (error) {
-      console.error("Error setting link:", error);
-    }
-  };
+export function ToolbarButton({
+  icon: Icon,
+  label,
+  shortcut,
+  isActive,
+  disabled,
+  onClick,
+}: {
+  icon: LucideIcon;
+  label: string;
+  shortcut?: string;
+  isActive?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
   return (
-    <div className="sticky top-0 z-50 backdrop-blur-md
-             mb-3 grid grid-cols-10 mx-auto gap-1 md:gap-2 w-fit shadow-2xl">
-      <Button
-        type="button"
-        onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-        className={editor?.isActive("blockquote") ? "bg-gray-500" : ""}
-      >
-        <Quote />
-      </Button>
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={editor.isActive("codeBlock") ? "bg-gray-500" : ""}
-      >
-        <Code2 />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHighlight().run()}
-        className={editor.isActive("highlight") ? "is-active" : ""}
-      >
-       <Highlighter />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive("bold") ? "bg-gray-500" : ""}
-      >
-        <Bold />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive("italic") ? "bg-gray-500" : ""}
-      >
-        <Italic />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive("bulletList") ? "is-active" : ""}
-      >
-        <List />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={
-          editor.isActive("heading", { level: 1 }) ? "bg-gray-500" : ""
-        }
-      >
-        H1
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={
-          editor.isActive("heading", { level: 2 }) ? "bg-gray-500" : ""
-        }
-      >
-        H2
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={
-          editor.isActive("heading", { level: 3 }) ? "bg-gray-500" : ""
-        }
-      >
-        H3
-      </Button>
-
-      <Button
-        type="button"
-        onClick={addImage}
-        className={editor.isActive("image") ? "bg-gray-500" : ""}
-      >
-        <Image />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
-        className={editor.isActive({ textAlign: "left" }) ? "is-active" : ""}
-      >
-        <AlignLeft />
-      </Button>
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
-        className={editor.isActive({ textAlign: "center" }) ? "is-active" : ""}
-      >
-        <AlignCenter />
-      </Button>
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
-        className={editor.isActive({ textAlign: "right" }) ? "is-active" : ""}
-      >
-        <AlignRight />
-      </Button>
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().undo().run()}
-        disabled={!editor.can().undo()}
-      >
-        <Undo2 />
-      </Button>
-      <Button
-        type="button"
-        onClick={() => editor.chain().focus().redo().run()}
-        disabled={!editor.can().redo()}
-      >
-        <Redo2 />
-      </Button>
-      {/* <Button
-        type="button"
-        onClick={() => editor.chain().focus().setEmoji("zap").run()}
-      >
-        ⚡
-      </Button> */}
-      <Button type="button" onClick={addYoutubeVideo}>
-        <Video />
-      </Button>
-
-      <Button
-        type="button"
-        onClick={setLink}
-        className={editor.isActive("link") ? "is-active" : ""}
-      >
-        <Link2 />
-      </Button>
-      <Button
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
           type="button"
-          onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '1.5'}).run()}
-          className={editor.isActive("lineHeight", { lineHeight: '1.5' }) ? "is-active" : ""}
+          aria-label={label}
+          aria-pressed={isActive}
+          disabled={disabled}
+          onMouseDown={(e) => e.preventDefault()} // keep the editor selection
+          onClick={onClick}
+          className={cn(
+            "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-35",
+            isActive && "bg-accent text-foreground",
+          )}
         >
-            <span className="leading-3">1.5</span>
-          </Button>
+          <Icon className="h-4 w-4" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="font-sans">
+        {label}
+        {shortcut && <span className="ml-2 opacity-60">{shortcut}</span>}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
-        <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '2.0'}).run()}
-        className={editor.isActive("lineHeight", { lineHeight: '2.0' }) ? "is-active" : ""}
-      >
-        <span className="leading-3">2.0</span>
-      </Button>
+const Divider = () => <span className="mx-1 h-5 w-px shrink-0 bg-border" />;
 
-        <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleTextStyle( { lineHeight: '4.0'}).run()}
-        className={editor.isActive("lineHeight", { lineHeight: '4.0' }) ? "is-active" : ""}
-      >
-        <span className="leading-3">4.0</span>
-      </Button>
+export function promptForLink(editor: Editor) {
+  const previousUrl = (editor.getAttributes("link").href as string | undefined) ?? "";
+  const url = window.prompt("Link URL (leave empty to remove)", previousUrl);
+  if (url === null) return;
+  if (url === "") {
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    return;
+  }
+  editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+}
 
-      {/* <Button
-        type="button"
-        onClick={() => editor.chain().focus().toggleTextStyle( { fontFamily: '"Comic Sans MS", "Comic Sans"' }).run()}
-        className={editor.isActive("fontFamily", { fontFamily: '"Comic Sans MS", "Comic Sans"' }) ? "is-active" : ""}
-      >
-        <span className="leading-3">Comic Sans</span>
-      </Button> */}
+export const EditorMenu = ({ editor }: { editor: Editor }) => {
+  // Re-render only when the formatting state under the cursor changes.
+  const state = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      h1: editor.isActive("heading", { level: 1 }),
+      h2: editor.isActive("heading", { level: 2 }),
+      h3: editor.isActive("heading", { level: 3 }),
+      bold: editor.isActive("bold"),
+      italic: editor.isActive("italic"),
+      underline: editor.isActive("underline"),
+      strike: editor.isActive("strike"),
+      code: editor.isActive("code"),
+      highlight: editor.isActive("highlight"),
+      link: editor.isActive("link"),
+      bulletList: editor.isActive("bulletList"),
+      orderedList: editor.isActive("orderedList"),
+      blockquote: editor.isActive("blockquote"),
+      codeBlock: editor.isActive("codeBlock"),
+      alignLeft: editor.isActive({ textAlign: "left" }),
+      alignCenter: editor.isActive({ textAlign: "center" }),
+      alignRight: editor.isActive({ textAlign: "right" }),
+      canUndo: editor.can().undo(),
+      canRedo: editor.can().redo(),
+    }),
+  });
+
+  const chain = () => editor.chain().focus();
+
+  return (
+    <div
+      role="toolbar"
+      aria-label="Formatting"
+      className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-border/70 bg-background/90 px-1.5 py-1 shadow-sm backdrop-blur [scrollbar-width:none]"
+    >
+      <ToolbarButton icon={Undo2} label="Undo" shortcut={`${modKey}Z`} disabled={!state.canUndo} onClick={() => chain().undo().run()} />
+      <ToolbarButton icon={Redo2} label="Redo" shortcut={`${modKey}⇧Z`} disabled={!state.canRedo} onClick={() => chain().redo().run()} />
+      <Divider />
+      <ToolbarButton icon={Heading1} label="Heading 1" shortcut="# " isActive={state.h1} onClick={() => chain().toggleHeading({ level: 1 }).run()} />
+      <ToolbarButton icon={Heading2} label="Heading 2" shortcut="## " isActive={state.h2} onClick={() => chain().toggleHeading({ level: 2 }).run()} />
+      <ToolbarButton icon={Heading3} label="Heading 3" shortcut="### " isActive={state.h3} onClick={() => chain().toggleHeading({ level: 3 }).run()} />
+      <Divider />
+      <ToolbarButton icon={Bold} label="Bold" shortcut={`${modKey}B`} isActive={state.bold} onClick={() => chain().toggleBold().run()} />
+      <ToolbarButton icon={Italic} label="Italic" shortcut={`${modKey}I`} isActive={state.italic} onClick={() => chain().toggleItalic().run()} />
+      <ToolbarButton icon={Underline} label="Underline" shortcut={`${modKey}U`} isActive={state.underline} onClick={() => chain().toggleUnderline().run()} />
+      <ToolbarButton icon={Strikethrough} label="Strikethrough" shortcut={`${modKey}⇧S`} isActive={state.strike} onClick={() => chain().toggleStrike().run()} />
+      <ToolbarButton icon={Code} label="Inline code" shortcut={`${modKey}E`} isActive={state.code} onClick={() => chain().toggleCode().run()} />
+      <ToolbarButton icon={Highlighter} label="Highlight" shortcut={`${modKey}⇧H`} isActive={state.highlight} onClick={() => chain().toggleHighlight().run()} />
+      <ToolbarButton icon={Link2} label="Link" shortcut={`${modKey}K`} isActive={state.link} onClick={() => promptForLink(editor)} />
+      <Divider />
+      <ToolbarButton icon={List} label="Bulleted list" shortcut="- " isActive={state.bulletList} onClick={() => chain().toggleBulletList().run()} />
+      <ToolbarButton icon={ListOrdered} label="Numbered list" shortcut="1. " isActive={state.orderedList} onClick={() => chain().toggleOrderedList().run()} />
+      <ToolbarButton icon={Quote} label="Quote" shortcut="> " isActive={state.blockquote} onClick={() => chain().toggleBlockquote().run()} />
+      <ToolbarButton icon={Code2} label="Code block" shortcut="``` " isActive={state.codeBlock} onClick={() => chain().toggleCodeBlock().run()} />
+      <ToolbarButton icon={Minus} label="Divider" shortcut="---" onClick={() => chain().setHorizontalRule().run()} />
+      <Divider />
+      <ToolbarButton icon={AlignLeft} label="Align left" isActive={state.alignLeft} onClick={() => chain().setTextAlign("left").run()} />
+      <ToolbarButton icon={AlignCenter} label="Align center" isActive={state.alignCenter} onClick={() => chain().setTextAlign("center").run()} />
+      <ToolbarButton icon={AlignRight} label="Align right" isActive={state.alignRight} onClick={() => chain().setTextAlign("right").run()} />
+      <Divider />
+      <ToolbarButton icon={ImagePlus} label="Upload image" onClick={() => pickImageIntoEditor(editor)} />
+      <ToolbarButton
+        icon={Youtube}
+        label="Embed YouTube video"
+        onClick={() => {
+          const src = window.prompt("YouTube video URL");
+          if (src) chain().setYoutubeVideo({ src }).run();
+        }}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import "highlight.js/styles/github-dark.css";
@@ -9,7 +9,31 @@ import { ToggleLikeAction } from "../toggleLikeAction";
 import { IncrementPostViewCount } from "../incrementPostViewCountAction";
 import { useTheme } from "next-themes";
 
-export default function ViewBlogPage({ content, author, likedByUsers, postId, slugName, viewCount }: { content: string, author: string, likedByUsers: string[], postId: number, slugName: string, viewCount: number }) {
+function ReadingProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+  return (
+    <div
+      aria-hidden
+      className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-gradient-to-r from-sky-500 to-indigo-500"
+      style={{ transform: `scaleX(${progress})` }}
+    />
+  );
+}
+
+export default function ViewBlogPage({ content, author, likedByUsers, postId, slugName, viewCount, publishedAt, readingMinutes, isDraft, title, description }: { title: string | null, description: string | null, content: string, author: string, likedByUsers: string[], postId: number, slugName: string, viewCount: number, publishedAt: string, readingMinutes: number, isDraft: boolean }) {
  const user = useSession();
  const { theme } = useTheme();
  const isDarkMode = theme === "dark";
@@ -44,7 +68,7 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
       IncrementPostViewCount(postId, slugName);
       viewIncrementd.current = true;
     }
-  }, [postId, slugName]);
+  }, [postId, slugName, isDraft]);
 
   const fill = isDarkMode ? "#99a1af" : "#364153";
   const LikeButton = () => (
@@ -76,13 +100,36 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
     </div>
   );
   return (
-    <div className="w-full min-w-0 overflow-x-clip rounded-2xl border bg-card/80 px-2 pb-8 pt-6 shadow-sm sm:px-4 md:px-6 lg:px-8">
-      <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-3">
+    <div className="w-full min-w-0 overflow-x-clip rounded-2xl border bg-card/80 px-4 pb-10 pt-6 shadow-sm sm:px-8 md:px-12">
+      <ReadingProgress />
+      {isDraft && (
+        <p className="mb-4 rounded-md bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-300">
+          Draft preview — only admins can see this page until it&apos;s published.
+        </p>
+      )}
+      {title && (
+        <header className="mb-6">
+          <h1 className="font-serif text-[2rem] font-bold leading-[1.15] tracking-[-0.015em] text-foreground [text-wrap:balance] md:text-[2.375rem]">
+            {title}
+          </h1>
+          {description && (
+            <p className="mt-3 font-serif text-lg leading-snug text-muted-foreground [text-wrap:pretty]">
+              {description}
+            </p>
+          )}
+        </header>
+      )}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border/60 pb-3">
         <p className="min-w-0 text-sm text-muted-foreground">
-          Written by{" "}
           <span className="font-medium text-foreground">
             {author || "Unknown author"}
           </span>
+          <span className="mx-1.5">·</span>
+          <time dateTime={publishedAt}>
+            {new Date(publishedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+          </time>
+          <span className="mx-1.5">·</span>
+          {readingMinutes} min read
         </p>
         <div className="flex shrink-0 gap-4">
           <LikeButton />
@@ -91,7 +138,7 @@ export default function ViewBlogPage({ content, author, likedByUsers, postId, sl
       </div>
       <div className="w-full min-w-0 overflow-x-clip">
         <article
-          className="tiptap proseMirror mt-6 mb-4 min-h-full w-full min-w-0 !text-[0.95rem] leading-relaxed md:!text-[1.02rem]"
+          className="tiptap proseMirror mt-8 mb-4 min-h-full w-full min-w-0"
           dangerouslySetInnerHTML={{ __html: content || "" }}
         />
       </div>

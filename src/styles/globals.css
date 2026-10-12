@@ -26,14 +26,18 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   body {
-    @apply font-sans !text-[18px] dark:text-gray-300
+    @apply font-sans;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
   }
 }
 
-@theme {
-  --font-sans: source-serif-pro, ui-sans-serif, system-ui, sans-serif,
+/* Font variables come from next/font in src/lib/fonts.ts */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, Cambria, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 :root {
@@ -161,12 +165,12 @@
 }
 
 .tiptap blockquote {
-  @apply mx-0 my-6 border-l-4 border-l-slate-300 bg-slate-50 px-4 py-3 italic text-slate-700 dark:border-l-slate-600 dark:bg-slate-900/60 dark:text-slate-200;
+  @apply mx-0 my-8 border-l-[3px] border-l-foreground/70 py-1 pl-5 italic text-foreground/80;
 }
 
 /* Code block: light theme in light mode, dark theme in dark mode (language-javascript and all hljs) */
 .tiptap pre {
-  @apply !my-4 block w-full max-w-full overflow-x-auto overflow-y-hidden rounded-lg px-3 py-3 text-xs md:text-sm;
+  @apply !my-6 block w-full max-w-full overflow-x-auto overflow-y-hidden rounded-lg px-4 py-3.5 font-mono text-xs leading-relaxed md:text-sm;
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
   box-sizing: border-box;
@@ -310,28 +314,35 @@
   background-color: rgba(248, 81, 73, 0.15);
 }
 
-/* Basic editor styles */
+/* Reading & writing typography — shared by the editor and published posts */
 .tiptap {
-  @apply min-w-0 max-w-full text-[0.95rem] leading-relaxed md:text-[1.02rem] [&>:first-child]:mt-0;
+  @apply min-w-0 max-w-full font-serif text-[1rem] leading-[1.7] text-foreground/90 md:text-[1.0625rem] [&>:first-child]:mt-0;
   width: 100%;
   overflow-x: clip;
   box-sizing: border-box;
+  font-optical-sizing: auto;
+  hanging-punctuation: first;
+  text-wrap: pretty;
 }
 
 .tiptap img {
-  @apply my-4 max-h-[480px] w-full rounded-xl object-cover;
+  @apply my-8 max-h-[560px] w-full rounded-xl object-cover;
 }
 
 .tiptap ul,
 .tiptap ol {
-  @apply my-4 list-outside pl-5;
+  @apply my-5 list-outside pl-6;
 }
 
 .tiptap ul ol,
 .tiptap ol ol,
 .tiptap ul ul,
 .tiptap ol ul {
-  @apply my-0.5;
+  @apply my-1;
+}
+
+.tiptap li {
+  @apply my-1.5 pl-1 marker:text-muted-foreground;
 }
 
 .tiptap li p {
@@ -350,28 +361,60 @@
   @apply my-4;
 }
 
+.tiptap h1,
+.tiptap h2,
+.tiptap h3 {
+  @apply font-serif font-semibold text-foreground;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
 .tiptap h1 {
-  @apply mb-3 mt-6 text-2xl font-bold tracking-tight md:text-3xl;
+  @apply mb-4 mt-10 text-[1.75rem] font-bold leading-[1.2] md:text-[2rem];
 }
 
 .tiptap h2 {
-  @apply mb-2 mt-6 text-xl font-semibold tracking-tight md:text-2xl;
+  @apply mb-2 mt-9 text-[1.3125rem] leading-[1.3] md:text-[1.4375rem];
 }
 
 .tiptap h3 {
-  @apply mb-2 mt-5 text-lg font-semibold tracking-tight md:text-xl;
+  @apply mb-1.5 mt-7 text-[1.125rem] leading-[1.35] md:text-[1.1875rem];
+}
+
+/* Headings directly after another heading don't need the full top gap */
+.tiptap :is(h1, h2, h3) + :is(h2, h3) {
+  @apply mt-4;
+}
+
+/* Pasted content can carry inline fonts; keep the reading typography consistent */
+.tiptap [style*="font-family"] {
+  font-family: inherit !important;
+}
+
+.tiptap strong {
+  @apply font-semibold text-foreground;
 }
 
 .tiptap a {
-  @apply font-semibold text-sky-600 underline underline-offset-2 hover:text-sky-700 dark:text-sky-300 dark:hover:text-sky-200;
+  @apply text-foreground underline decoration-sky-500/60 decoration-[1.5px] underline-offset-[3px] transition-colors hover:decoration-sky-500 dark:decoration-sky-400/60;
+}
+
+.tiptap mark {
+  @apply rounded-sm bg-amber-200/70 px-0.5 text-inherit dark:bg-amber-400/25;
 }
 
 .tiptap hr {
-  @apply my-6 border-t border-dashed border-border;
+  @apply my-12 border-0 text-center;
+}
+
+.tiptap hr::after {
+  @apply text-muted-foreground;
+  content: "· · ·";
+  letter-spacing: 0.6em;
 }
 
 .tiptap table {
-  @apply my-4 w-full border-collapse text-sm;
+  @apply my-6 w-full border-collapse font-sans text-sm;
 }
 
 .tiptap th,
@@ -384,12 +427,33 @@
 }
 
 .tiptap code {
-  @apply break-words rounded bg-slate-100 px-1.5 py-0.5 text-[0.85em] font-mono text-slate-800 dark:bg-slate-800 dark:text-slate-100;
+  @apply break-words rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.8em] text-slate-800 dark:bg-slate-800 dark:text-slate-100;
 }
 
 .tiptap pre code {
   @apply block min-w-0 bg-transparent p-0 text-[0.85em];
 }
+
+/* Show code exactly as typed (no => to ⇒ ligatures) */
+.tiptap code,
+.tiptap pre {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+/* Beat the dark-mode inline-code background (.tiptap code:is(.dark *)) */
+.dark .tiptap pre code {
+  background-color: transparent;
+}
+
+.tiptap div[data-youtube-video] {
+  @apply my-8;
+}
+
+.tiptap iframe {
+  @apply aspect-video h-auto w-full rounded-xl;
+}
+
 /* Prevent any child of tiptap from causing horizontal scroll */
 .tiptap * {
   max-width: 100%;
@@ -400,11 +464,32 @@
   box-sizing: border-box;
 }
 
-/* optional: make sure it applies even with Tailwind's .prose */
-.prose p.is-editor-empty:first-child::before {
+/* ---- Editor-only affordances ---- */
+.editor-canvas {
+  min-height: 50vh;
+  caret-color: var(--color-sky-500);
+}
+
+.editor-canvas ::selection {
+  @apply bg-sky-200/70 dark:bg-sky-500/30;
+}
+
+/* Per-block placeholders ("Heading 2", "Press / for blocks…") */
+.editor-canvas .is-empty[data-placeholder]::before {
   content: attr(data-placeholder);
-  color: #9ca3af;
-  float: left;
-  height: 0;
-  pointer-events: none;
+  @apply pointer-events-none float-left h-0 text-muted-foreground/45;
+}
+
+/* Selected image / video gets a clear outline */
+.editor-canvas .ProseMirror-selectednode {
+  @apply outline-2 outline-offset-4 outline-sky-500;
+}
+
+.editor-canvas img {
+  @apply cursor-default;
+}
+
+/* Slash command trigger text */
+.editor-canvas .suggestion {
+  @apply rounded bg-muted px-0.5 text-muted-foreground;
 }

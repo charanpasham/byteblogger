@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { fontVariables } from "@/lib/fonts";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -27,11 +27,6 @@ export const metadata: Metadata = {
   }
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -41,10 +36,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning className={geist.variable}>
-      <head>
-        <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
-      </head>
+    <html lang="en" suppressHydrationWarning className={fontVariables}>
       <body className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 antialiased text-foreground dark:from-slate-950 dark:to-slate-900">
         <ThemeProvider
           attribute="class"

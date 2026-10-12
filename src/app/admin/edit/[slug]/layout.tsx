@@ -1,10 +1,11 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { fontVariables } from "@/lib/fonts";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { requireAuth } from "@/lib/authGuard";
+import { redirect } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -25,22 +26,17 @@ export const metadata: Metadata = {
   }
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // Ensure the user is authenticated
-  await requireAuth();
+  // Ensure the user is authenticated and allowed to edit
+  const session = await requireAuth();
+  if (session.user?.role !== "admin") {
+    redirect("/");
+  }
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.variable}`}>
-      <head>
-        <link rel="stylesheet" href="https://use.typekit.net/yxq7fwh.css"></link>
-      </head>
-      <body className="dark:bg-[#1a1a1a] antialiased mx-4 mt-8">
+    <html lang="en" suppressHydrationWarning className={fontVariables}>
+      <body className="min-h-screen bg-background antialiased">
         <main>
           <TooltipProvider>
             <ThemeProvider

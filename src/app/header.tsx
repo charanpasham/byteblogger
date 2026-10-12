@@ -5,6 +5,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 import { LogOut as LogOutIcon, Settings } from "lucide-react";
 import { DropdownMenu } from "@/components/ui/dropdown";
 import {
@@ -14,8 +16,31 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown";
 
+// Hide the header while scrolling down (reading), reveal it on scroll up.
+function useHideOnScroll() {
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+      if (y < 80) setHidden(false);
+      else if (delta > 6) setHidden(true);
+      else if (delta < -6) setHidden(false);
+      // Ignore tiny jitters so the header doesn't flicker.
+      if (Math.abs(delta) > 6 || y < 80) lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return hidden;
+}
+
 export default function Header() {
   const { data: session, status } = useSession();
+  const hidden = useHideOnScroll();
 
   const LogOut = () => {
     if (!session) {
@@ -95,7 +120,11 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur pt-[env(safe-area-inset-top)]"
+      className={cn(
+        "sticky top-0 z-30 border-b bg-background/80 backdrop-blur pt-[env(safe-area-inset-top)] transition-transform duration-300 ease-out motion-reduce:transition-none",
+        // Keep it visible while something inside (e.g. the account menu) has focus.
+        hidden && "-translate-y-full focus-within:translate-y-0",
+      )}
       style={{ minHeight: "calc(4rem + env(safe-area-inset-top, 0px))" }}
     >
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-2 sm:px-4 md:px-8">

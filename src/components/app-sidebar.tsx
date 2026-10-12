@@ -1,7 +1,10 @@
 "use client";
 import {
-  Home,
+  Globe,
+  LayoutDashboard,
+  PenSquare,
   Settings,
+  Tags,
 } from "lucide-react";
 
 import {
@@ -30,7 +33,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-2xl">
+          <SidebarGroupLabel className="font-serif text-2xl font-bold text-foreground">
             Byte Blogger
           </SidebarGroupLabel>
           <SidebarGroupContent className="mt-5">
@@ -38,17 +41,26 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/">
-                    <Home />
+                    <Globe />
                     <span>Home</span>
                   </Link>
                 </SidebarMenuButton>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathName === paths["admin-home"] || pathName === paths["create-blog"]}
+                  isActive={pathName === paths["admin-home"]}
                 >
                   <Link href={paths["admin-home"]}>
-                    <Home />
+                    <LayoutDashboard />
                     <span>Admin Home</span>
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathName === paths["create-blog"]}
+                >
+                  <Link href={paths["create-blog"]}>
+                    <PenSquare />
+                    <span>New Post</span>
                   </Link>
                 </SidebarMenuButton>
                 <SidebarMenuButton
@@ -56,7 +68,7 @@ export function AppSidebar() {
                   isActive={pathName === paths["tags-management"]}
                 >
                   <Link href={paths["tags-management"]}>
-                    <Home />
+                    <Tags />
                     <span>Tag Management</span>
                   </Link>
                 </SidebarMenuButton>

@@ -2,6 +2,29 @@ import { db } from "@/server/db";
 import { posts } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import ViewBlogPage from "./viewBlog";
+import { auth } from "@/server/auth";
+import { type Metadata } from "next";
+
+const WORDS_PER_MINUTE = 230;
+
+function readingMinutes(html: string) {
+  const words = html.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+}
+
+export async function generateMetadata({ params }: PostProps): Promise<Metadata> {
+  const { slug } = await params;
+  if (!slug) return {};
+  const post = await db.query.posts.findFirst({
+    where: eq(posts.slug, slug),
+    columns: { title: true, description: true, isPublished: true },
+  });
+  if (!post?.isPublished) return {};
+  return {
+    title: `${post.title} · Byte Blog`,
+    description: post.description ?? undefined,
+  };
+}
 
 interface PostProps {
   params: Promise<{
@@ -27,7 +50,9 @@ export default async function PostsPage({ params }: PostProps) {
     }
   });
 
-  if (!post) {
+  // Drafts are only visible to admins (used for previewing from the editor).
+  const session = !post || post.isPublished ? null : await auth();
+  if (!post || (!post.isPublished && session?.user?.role !== "admin")) {
     return (
       <div className="mx-auto max-w-3xl px-2 py-16 text-sm text-muted-foreground sm:px-4">
         Post not found
@@ -44,6 +69,12 @@ export default async function PostsPage({ params }: PostProps) {
         postId={post.id ?? 0}
         slugName={post.slug ?? ""}
         viewCount={post.viewCount ?? 0}
+        publishedAt={(post.publishedAt ?? post.createdAt).toISOString()}
+        readingMinutes={readingMinutes(post.content ?? "")}
+        isDraft={!post.isPublished}
+        // Older posts carry their title as an <h1> in the body; don't repeat it.
+        title={/^\s*<h1[\s>]/i.test(post.content ?? "") ? null : post.title}
+        description={post.description}
       />
     </div>
   );
