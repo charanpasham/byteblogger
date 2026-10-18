@@ -10,7 +10,23 @@ export const PROFILE = {
   linkedinHandle: "scharan19",
   // Split so the address never appears whole in the HTML (keeps most scrapers out).
   emailParts: ["scharan19", "gmail.com"] as const,
-  skills: ["C#", ".NET", "AWS", "TypeScript", "Next.js"],
+  // From the resume, grouped: languages & frameworks, cloud & DevOps, data & APIs.
+  skills: [
+    "C#",
+    ".NET",
+    "Python",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "CI/CD",
+    "SQL Server",
+    "Redis",
+    "REST APIs",
+  ],
 };
 
 // Official brand marks (Simple Icons, CC0).

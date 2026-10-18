@@ -8,6 +8,7 @@ import {
   ExternalLink,
   FileText,
   Loader2,
+  Share2,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -146,6 +147,20 @@ export function ResumeManager({ resume }: { resume: CurrentResume | null }) {
     });
   };
 
+  const shareLink = async () => {
+    const link = `${window.location.origin}/resume`;
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.success("Resume link copied", {
+        description: `${link} — always opens your latest resume.`,
+        descriptionClassName: "!text-muted-foreground",
+      });
+    } catch {
+      // Clipboard can be blocked (e.g. non-HTTPS); let the user copy it by hand.
+      window.prompt("Copy your resume link:", link);
+    }
+  };
+
   const busy = isUploading || isRemoving;
 
   return (
@@ -209,6 +224,9 @@ export function ResumeManager({ resume }: { resume: CurrentResume | null }) {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => void shareLink()}>
+                <Share2 /> Share
+              </Button>
               <Button asChild variant="outline" size="sm">
                 <a href={resume.url} target="_blank" rel="noreferrer">
                   <ExternalLink /> View
