@@ -9,6 +9,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Byte Blog",
@@ -64,6 +65,7 @@ export default async function RootLayout({
                 )}
               </main>
             </SidebarProvider>
+            <Toaster />
           </SessionProvider>
         </ThemeProvider>
       </body>

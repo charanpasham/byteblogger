@@ -253,3 +253,19 @@ export const commentLikes = createTable(
     index("comment_likes_user_id_idx").on(t.userId),
   ],
 );
+
+// The resume shown on the About Me section. Only the newest row is used;
+// older rows (and their UploadThing files) are removed when a new one is uploaded.
+export const resumes = createTable("resume", (d) => ({
+  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  url: d.varchar({ length: 1024 }).notNull(),
+  fileKey: d.varchar({ length: 256 }).notNull(),
+  fileName: d.varchar({ length: 256 }).notNull(),
+  fileSize: d.integer().notNull(),
+  // Toggled from the admin dashboard; hides the Resume button without deleting the file.
+  isVisible: d.boolean().notNull().default(true),
+  uploadedAt: d
+    .timestamp({ withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+}));

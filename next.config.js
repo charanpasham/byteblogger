@@ -14,7 +14,8 @@ const config = {
   images: { 
     remotePatterns: [ 
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "o5vr90ifqp.ufs.sh" }
+      { protocol: "https", hostname: "o5vr90ifqp.ufs.sh" },
+      { protocol: "https", hostname: "images.credly.com" }
     ],
   },
 };

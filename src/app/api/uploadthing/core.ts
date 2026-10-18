@@ -4,6 +4,8 @@ import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { setCurrentResume } from "@/server/resume";
 
 const utapi = new UTApi();
 
@@ -79,6 +81,29 @@ export const ourFileRouter = {
       if (metadata.currentImageKey) {
         await utapi.deleteFiles(metadata.currentImageKey);
       }
+    }),
+  // Admin-only: the resume linked from the About Me section.
+  resumeUploader: f({
+    pdf: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
+  })
+    .middleware(async () => {
+      const session = await auth();
+      if (session?.user?.role !== "admin") throw new UploadThingError("Unauthorized");
+      return { userId: session.user.id };
+    })
+    .onUploadComplete(async ({ file }) => {
+      await setCurrentResume({
+        url: file.ufsUrl,
+        key: file.key,
+        name: file.name,
+        size: file.size,
+      });
+      revalidatePath("/");
+      revalidatePath("/admin");
+      return { url: file.ufsUrl };
     }),
 } satisfies FileRouter;
 

@@ -4,7 +4,7 @@ import { posts, posttagmapping, posttags } from "@/server/db/schema";
 import { and, asc, count, eq } from "drizzle-orm";
 import Link from "next/link";
 
-export async function RenderTags() {
+export async function RenderTags({ activeSlug }: { activeSlug?: string } = {}) {
   // One row per tag (not per post-tag mapping), counting only published posts
   // so every listed tag leads to a non-empty tag page.
   const postTags = await db
@@ -34,10 +34,17 @@ export async function RenderTags() {
       </p>
       <div className="flex flex-wrap gap-2">
         {postTags.map((pt) => (
-          <Link href={`/posts/tags/${pt.tagSlug}`} key={pt.tagId}>
-            <Badge variant="secondary" className="cursor-pointer gap-1.5">
+          <Link
+            href={`/posts/tags/${pt.tagSlug}`}
+            key={pt.tagId}
+            aria-current={pt.tagSlug === activeSlug ? "page" : undefined}
+          >
+            <Badge
+              variant={pt.tagSlug === activeSlug ? "default" : "secondary"}
+              className="cursor-pointer gap-1.5"
+            >
               {pt.tagName}
-              <span className="text-muted-foreground">{pt.postCount}</span>
+              <span className="opacity-60">{pt.postCount}</span>
             </Badge>
           </Link>
         ))}

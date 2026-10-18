@@ -1,9 +1,11 @@
-import { AboutMe } from "@/app/(home)/aboutMe";
 import { PostGrid } from "@/app/(home)/postGrid";
 import { RenderTags } from "@/app/(home)/renderTags";
 import { db } from "@/server/db";
 import { posts, posttagmapping, posttags, users } from "@/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PostProps {
   params: Promise<{
@@ -15,6 +17,15 @@ export default async function PostByTag({ params }: PostProps) {
   const { slug } = await params;
   if (!slug) {
     return <div className="container mx-auto px-2 py-16 sm:px-4">Invalid tag</div>;
+  }
+
+  const [tag] = await db
+    .select({ name: posttags.name })
+    .from(posttags)
+    .where(eq(posttags.tagSlug, slug))
+    .limit(1);
+  if (!tag) {
+    notFound();
   }
 
   const postsByTag = await db.select(
@@ -36,20 +47,24 @@ export default async function PostByTag({ params }: PostProps) {
         eq(posts.isPublished, true)
       )
     )
-    .orderBy(posts.createdAt);
+    .orderBy(desc(posts.createdAt));
 
 
   return (
-      <div className="container flex flex-col md:flex-row gap-5 py-16">
-        <div className="md:w-1/3 text-center flex flex-col gap-4">
-            <AboutMe />
-            <div className="flex flex-wrap gap-2 justify-center mt-4">
-               <RenderTags />
-            </div>
-
-        </div>
-          <PostGrid posts={postsByTag} heading={`Posts tagged with "${slug}"`} />
+    <div className="flex flex-col gap-6 py-10">
+      <Link
+        href="/"
+        className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        All posts
+      </Link>
+      <div className="flex flex-col gap-10 md:flex-row md:items-start">
+        <PostGrid posts={postsByTag} heading={`Tagged “${tag.name}”`} />
+        <aside className="md:sticky md:top-24 md:w-64 md:shrink-0">
+          <RenderTags activeSlug={slug} />
+        </aside>
       </div>
-
+    </div>
   );
 }

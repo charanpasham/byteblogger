@@ -19,7 +19,7 @@ type PostProps = {
 
 export function PostGrid( { posts, heading}: { posts: PostProps[], heading: string } ) {
     return (
-          <div className="flex w-full flex-col gap-4 md:w-2/3">
+          <div className="flex w-full min-w-0 flex-1 flex-col gap-4">
               <div className="flex items-baseline justify-between gap-2">
                 <h2 className="text-base font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   {heading}

@@ -10,6 +10,8 @@ import { DeletePost } from "./deletePost";
 import { TogglePublishPostAction } from "./togglePublishPostAction";
 import { TogglePinPostAction } from "./togglePinPostAction";
 import { Button } from "@/components/ui/button";
+import { getCurrentResume } from "@/server/resume";
+import { ResumeManager } from "./resumeManager";
 export default async function Admin() {
   const session = await auth();
   if (!session) {
@@ -22,6 +24,7 @@ export default async function Admin() {
     .from(posts)
     .where(eq(posts.userId, session.user.id))
     .orderBy(posts.createdAt);
+  const resume = await getCurrentResume();
   return (
     <div className="space-y-8">
       <div className="flex items-baseline justify-between gap-2">
@@ -64,6 +67,28 @@ export default async function Admin() {
           </CardHeader>
         </Card>
       </div>
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Resume
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Shown as a Resume button in the About Me section on your home page.
+          </p>
+        </div>
+        <ResumeManager
+          resume={
+            resume && {
+              url: resume.url,
+              fileName: resume.fileName,
+              fileSize: resume.fileSize,
+              uploadedAt: resume.uploadedAt.toISOString(),
+              isVisible: resume.isVisible,
+            }
+          }
+        />
+      </section>
 
       <section className="space-y-4">
         <div className="flex items-baseline justify-between gap-2">

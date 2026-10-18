@@ -138,6 +138,9 @@ export default function Header() {
             <Skeleton className="h-8 w-20" />
           ) : (
             <>
+              <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <Link href="/contact">Contact</Link>
+              </Button>
               {session?.user?.role === "admin" && (
                 <Button asChild variant="outline" size="sm">
                   <Link href="/admin">Admin</Link>
